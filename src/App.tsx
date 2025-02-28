@@ -22,7 +22,9 @@ export default function App() {
 		<section className='mx-auto flex min-h-dvh w-full max-w-tablet flex-col gap-12 px-6 py-20'>
 			<Header />
 			<section className='grid h-full grid-cols-2 gap-6'>
-				<PieChart data={dataForChart} config={chartConfig} />
+				<section>
+					<PieChart data={dataForChart} config={chartConfig} />
+				</section>
 				<ContributorsList />
 			</section>
 		</section>
