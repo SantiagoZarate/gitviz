@@ -22,6 +22,9 @@
 			"complexity": {
 				"noForEach": "off"
 			},
+			"style": {
+				"noNonNullAssertion": "off"
+			},
 			"recommended": true,
 			"nursery": {
 				"useSortedClasses": {

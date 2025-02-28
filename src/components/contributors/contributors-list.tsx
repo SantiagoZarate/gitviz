@@ -1,10 +1,7 @@
-import type { Contributor } from '@/lib/git-schema';
+import { useGitContext } from '@/context/global-context';
 
-interface Props {
-	contributors: Contributor[];
-}
-
-export function ContributorsList({ contributors }: Props) {
+export function ContributorsList() {
+	const { contributors } = useGitContext();
 	// const handleReºmoveContributor = (name: string) => {
 	//   setJson((prevState) => {
 	//     const filteredContributors = prevState?.co.filter((co) => co.n !== name);
