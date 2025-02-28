@@ -1,10 +1,11 @@
 import { generateChartConfig } from './components/charts/generate-chart-config';
 import { PieChart } from './components/charts/pie-chart';
+import { Header } from './components/common/header';
 import { ContributorsList } from './components/contributors/contributors-list';
 import { useGitContext } from './context/global-context';
 
 export default function App() {
-	const { contributors, title } = useGitContext();
+	const { contributors } = useGitContext();
 
 	const dataForChart =
 		contributors.map((contributor) => ({
@@ -19,10 +20,7 @@ export default function App() {
 
 	return (
 		<section className='mx-auto flex min-h-dvh w-full max-w-tablet flex-col gap-12 px-6 py-20'>
-			<header className='flex flex-col gap-2'>
-				<h1>{title}</h1>
-				<p>Visualize git contributors on a repo</p>
-			</header>
+			<Header />
 			<section className='grid h-full grid-cols-2 gap-6'>
 				<PieChart data={dataForChart} config={chartConfig} />
 				<ContributorsList />
