@@ -1,5 +1,8 @@
 import { useGitContext } from '@/context/global-context';
+import { AnimatePresence } from 'motion/react';
 import { useState } from 'react';
+import { MotionItem } from '../motion/motion-item';
+import { MotionList } from '../motion/motion-list';
 import { Input } from '../ui/input';
 import { ContributorItem } from './contributor-item';
 
@@ -36,11 +39,15 @@ export function ContributorsList() {
 					placeholder='John Doe'
 				/>
 			</section>
-			<ul className='flex flex-col gap-2'>
-				{filteredContributors.map((contributor) => (
-					<ContributorItem contributor={contributor} key={contributor.n} />
-				))}
-			</ul>
+			<MotionList className='flex flex-col gap-2'>
+				<AnimatePresence mode='popLayout'>
+					{filteredContributors.map((contributor) => (
+						<MotionItem key={contributor.n}>
+							<ContributorItem contributor={contributor} />
+						</MotionItem>
+					))}
+				</AnimatePresence>
+			</MotionList>
 		</section>
 	);
 }
