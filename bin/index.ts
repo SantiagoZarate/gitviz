@@ -1,6 +1,9 @@
+#!/usr/bin/env node
+
 import LZString from 'lz-string';
 import childProccess from 'node:child_process';
 import path from 'node:path';
+import open from 'open';
 import simpleGit from 'simple-git';
 
 const git = simpleGit();
@@ -72,7 +75,9 @@ const getGitStats = async () => {
 		JSON.stringify(data),
 	);
 
-	console.log(`Frontend: http://localhost:5173/?q=${compressed}`);
+	const url = `http://localhost:5173/?q=${compressed}`;
+
+	await open(url);
 
 	return data;
 };
