@@ -2,11 +2,16 @@ import type { Contributor } from '@/lib/git-schema';
 
 interface Props {
 	contributor: Contributor;
+	onDelete: () => void;
+	onSelect: () => void;
 }
 
-export function ContributorItem({ contributor }: Props) {
+export function ContributorItem({ contributor, onDelete, onSelect }: Props) {
 	return (
-		<li className='flex items-center justify-between gap-12 rounded-xl border p-2'>
+		<li
+			onClick={onSelect}
+			className='flex items-center justify-between gap-12 rounded-xl border p-2'
+		>
 			<section className='flex flex-col gap-1'>
 				<section className='flex flex-col gap-1'>
 					<p>{contributor.n}</p>
@@ -25,8 +30,8 @@ export function ContributorItem({ contributor }: Props) {
 				<p>{contributor.c}</p>
 				<button
 					className='rounded-full bg-red-200 p-2'
+					onClick={onDelete}
 					type='button'
-					// onClick={() => handleRemoveContributor(contributor.n)}
 				>
 					x
 				</button>

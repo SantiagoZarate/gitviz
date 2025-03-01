@@ -7,15 +7,9 @@ import { Input } from '../ui/input';
 import { ContributorItem } from './contributor-item';
 
 export function ContributorsList() {
-	const { contributors } = useGitContext();
+	const { contributors, deleteContributor, updateActiveContributor } =
+		useGitContext();
 	const [textFilter, setTextFilter] = useState<string>('');
-
-	// const handleReºmoveContributor = (name: string) => {
-	//   setJson((prevState) => {
-	//     const filteredContributors = prevState?.co.filter((co) => co.n !== name);
-	//     return { ...prevState, co: filteredContributors };
-	//   });
-	// };
 
 	const filteredContributors = contributors.filter(
 		(c) =>
@@ -43,7 +37,11 @@ export function ContributorsList() {
 				<AnimatePresence mode='popLayout'>
 					{filteredContributors.map((contributor) => (
 						<MotionItem key={contributor.n}>
-							<ContributorItem contributor={contributor} />
+							<ContributorItem
+								onSelect={() => updateActiveContributor(contributor.n)}
+								onDelete={() => deleteContributor(contributor.n)}
+								contributor={contributor}
+							/>
 						</MotionItem>
 					))}
 				</AnimatePresence>

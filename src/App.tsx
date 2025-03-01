@@ -19,7 +19,7 @@ export default function App() {
 	});
 
 	return (
-		<section className='mx-auto flex min-h-dvh w-full max-w-tablet flex-col gap-12 px-6 py-20'>
+		<section className='mx-auto grid min-h-dvh w-full max-w-tablet grid-rows-[auto_1fr] gap-12 px-6 py-20'>
 			<Header />
 			<section className='grid h-full grid-cols-2 gap-6'>
 				<section>
