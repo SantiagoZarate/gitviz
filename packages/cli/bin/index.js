@@ -75,7 +75,12 @@ export const getGitStats = async () => {
 		JSON.stringify(data),
 	);
 
-	const url = `http://localhost:5173/?q=${compressed}`;
+	const clientUrl =
+		process.env.NODE_ENV === 'development'
+			? 'http://localhost:5173'
+			: 'https://git-viz.netlify.app/';
+
+	const url = `${clientUrl}/?q=${compressed}`;
 
 	await open(url);
 

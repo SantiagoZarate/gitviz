@@ -6,6 +6,9 @@
 	"bin": {
 		"git-stats": "bin/index.js"
 	},
+	"scripts": {
+		"dev": "NODE_ENV=development bun bin/index.js"
+	},
 	"devDependencies": {
 		"@types/bun": "latest"
 	},
