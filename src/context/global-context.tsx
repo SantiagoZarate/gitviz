@@ -1,5 +1,6 @@
 import { type Contributor, gitSchema } from '@/lib/git-schema';
-import { parseAsJson, useQueryState } from 'nuqs';
+import LZString from 'lz-string';
+import { parseAsString, useQueryState } from 'nuqs';
 import {
 	type PropsWithChildren,
 	createContext,
@@ -23,7 +24,15 @@ type GitContextProps = State & Actions;
 const gitContext = createContext<GitContextProps | null>(null);
 
 export function GitContextProvider({ children }: PropsWithChildren) {
-	const [json, setJson] = useQueryState('json', parseAsJson(gitSchema.parse));
+	const [compressedData] = useQueryState('q', parseAsString);
+
+	const decompressed = LZString.decompressFromEncodedURIComponent(
+		compressedData!,
+	);
+
+	const parsedData = gitSchema.parse(JSON.parse(decompressed));
+	const [json, setJson] = useState(parsedData);
+
 	const [activeContributor, setActiveContributor] =
 		useState<Contributor | null>(null);
 
@@ -33,22 +42,24 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 
 	const handleRemoveContributor = (name: string) => {
 		setJson((prevState) => {
-			const filteredContributors = prevState?.co.filter((co) => co.n !== name);
+			const filteredContributors = prevState?.contributors.filter(
+				(co) => co.name !== name,
+			);
 
 			return {
-				co: filteredContributors ?? [],
-				t: prevState!.t,
+				contributors: filteredContributors ?? [],
+				repoName: prevState!.repoName,
 			};
 		});
 	};
 
 	const handleUpdateActiveContributor = (name: string) => {
 		setActiveContributor((prevState) => {
-			if (prevState?.n === name) {
+			if (prevState?.name === name) {
 				return null;
 			}
 
-			return json.co.find((c) => c.n === name)!;
+			return json.contributors.find((c) => c.name === name)!;
 		});
 	};
 
@@ -56,9 +67,9 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 		<gitContext.Provider
 			value={{
 				// States
-				contributors: json?.co,
+				contributors: json?.contributors,
 				activeContributor,
-				title: json.t,
+				title: json.repoName,
 				// Actions
 				updateActiveContributor: handleUpdateActiveContributor,
 				deleteContributor: handleRemoveContributor,
