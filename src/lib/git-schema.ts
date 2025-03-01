@@ -19,8 +19,10 @@ export const gitSchema = z
 		),
 		// Github repo name
 		t: z.string(),
+		// Branch name
+		b: z.string(),
 	})
-	.transform(({ co, t }) => ({
+	.transform(({ co, t, b }) => ({
 		contributors: co.map(({ n, c, e, loc, rm }) => ({
 			name: n,
 			commits: c,
@@ -29,6 +31,7 @@ export const gitSchema = z
 			removed: rm,
 		})),
 		repoName: t,
+		branch: b,
 	}));
 
 export type GitSchema = z.infer<typeof gitSchema>;

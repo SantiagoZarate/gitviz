@@ -12,6 +12,7 @@ interface State {
 	activeContributor: Contributor | null;
 	contributors: Contributor[];
 	title: string;
+	branch: string;
 }
 
 interface Actions {
@@ -47,8 +48,8 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 			);
 
 			return {
+				...prevState,
 				contributors: filteredContributors ?? [],
-				repoName: prevState!.repoName,
 			};
 		});
 	};
@@ -70,6 +71,7 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 				contributors: json?.contributors,
 				activeContributor,
 				title: json.repoName,
+				branch: json.branch,
 				// Actions
 				updateActiveContributor: handleUpdateActiveContributor,
 				deleteContributor: handleRemoveContributor,
