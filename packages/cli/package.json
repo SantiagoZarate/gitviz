@@ -3,6 +3,9 @@
 	"module": "index.ts",
 	"version": "0.0.1",
 	"type": "module",
+	"bin": {
+		"git-stats": "bin/index.js"
+	},
 	"devDependencies": {
 		"@types/bun": "latest"
 	},

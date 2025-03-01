@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import LZString from 'lz-string';
 import childProccess from 'node:child_process';
 import path from 'node:path';
@@ -79,3 +81,6 @@ export const getGitStats = async () => {
 
 	return data;
 };
+
+// Execute and log result
+getGitStats().then(console.log).catch(console.error);
