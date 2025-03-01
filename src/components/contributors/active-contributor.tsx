@@ -23,12 +23,12 @@ export function ActiveContributor() {
 	const { activeContributor, contributors } = useGitContext();
 
 	const totalContributions = contributors.reduce(
-		(prev, curr) => prev + curr.c,
+		(prev, curr) => prev + curr.commits,
 		0,
 	);
 
 	const contributionPercentage = (
-		((activeContributor?.c ?? 0) / totalContributions) *
+		((activeContributor?.commits ?? 0) / totalContributions) *
 		100
 	).toFixed(2);
 
@@ -45,8 +45,10 @@ export function ActiveContributor() {
 				>
 					<Card>
 						<CardHeader>
-							<CardTitle>{activeContributor.n}</CardTitle>
-							<CardDescription>{activeContributor.c} commits</CardDescription>
+							<CardTitle>{activeContributor.name}</CardTitle>
+							<CardDescription>
+								{activeContributor.commits} commits
+							</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<section className='flex flex-col gap-2'>

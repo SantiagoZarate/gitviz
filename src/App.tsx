@@ -10,13 +10,13 @@ export default function App() {
 
 	const dataForChart =
 		contributors.map((contributor) => ({
-			dataKey: contributor.c,
-			nameKey: contributor.n,
-			fill: `var(--color-${contributor.n})`,
+			dataKey: contributor.commits,
+			nameKey: contributor.name,
+			fill: `var(--color-${contributor.name})`,
 		})) ?? [];
 
 	const chartConfig = generateChartConfig({
-		data: contributors.map((c) => c.n) ?? [''],
+		data: contributors.map((c) => c.name) ?? [''],
 	});
 
 	return (

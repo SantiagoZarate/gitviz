@@ -21,20 +21,20 @@ export function ContributorItem({
 		>
 			<section className='flex flex-col gap-1'>
 				<section className='flex flex-col gap-1'>
-					<p className='group-data-active:font-semibold'>{contributor.n}</p>
-					<p className='text-xs'>{contributor.e}</p>
+					<p className='group-data-active:font-semibold'>{contributor.name}</p>
+					<p className='text-xs'>{contributor.email}</p>
 				</section>
 				<section className='flex gap-2'>
 					<span className='rounded-full bg-green-200 px-2 py-1 text-green-600 text-xs'>
-						{contributor.loc}
+						{contributor.linesOfCode}
 					</span>
 					<span className='rounded-full bg-red-200 px-2 py-1 text-red-600 text-xs'>
-						{contributor.rm}
+						{contributor.removed}
 					</span>
 				</section>
 			</section>
 			<section className=''>
-				<p>{contributor.c}</p>
+				<p>{contributor.commits}</p>
 				<button
 					className='rounded-full bg-red-200 p-2'
 					onClick={onDelete}

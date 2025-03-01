@@ -17,7 +17,7 @@ export function ContributorsList() {
 
 	const filteredContributors = contributors.filter(
 		(c) =>
-			c.n.toLocaleLowerCase().indexOf(textFilter.toLocaleLowerCase()) !== -1,
+			c.name.toLocaleLowerCase().indexOf(textFilter.toLocaleLowerCase()) !== -1,
 	);
 
 	const handleUpdateText = (newValue: string) => {
@@ -40,11 +40,11 @@ export function ContributorsList() {
 			<MotionList className='flex flex-col gap-2'>
 				<AnimatePresence mode='popLayout'>
 					{filteredContributors.map((contributor) => (
-						<MotionItem key={contributor.n}>
+						<MotionItem key={contributor.name}>
 							<ContributorItem
-								active={activeContributor?.n === contributor.n}
-								onSelect={() => updateActiveContributor(contributor.n)}
-								onDelete={() => deleteContributor(contributor.n)}
+								active={activeContributor?.name === contributor.name}
+								onSelect={() => updateActiveContributor(contributor.name)}
+								onDelete={() => deleteContributor(contributor.name)}
 								contributor={contributor}
 							/>
 						</MotionItem>
