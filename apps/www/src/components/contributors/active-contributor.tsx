@@ -7,6 +7,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '../ui/card';
+import { ProgressBar } from '../ui/progress-bar';
 
 const sectionVariant: Variants = {
 	visible: {
@@ -27,6 +28,13 @@ export function ActiveContributor() {
 		0,
 	);
 
+	const totalLoC = contributors.reduce((prev, curr) => prev + curr.owned, 0);
+
+	const contributionLoCPercentage = (
+		((activeContributor?.owned ?? 0) / totalLoC) *
+		100
+	).toFixed(2);
+
 	const contributionPercentage = (
 		((activeContributor?.commits ?? 0) / totalContributions) *
 		100
@@ -46,20 +54,23 @@ export function ActiveContributor() {
 					<Card>
 						<CardHeader>
 							<CardTitle>{activeContributor.name}</CardTitle>
-							<CardDescription>
-								{activeContributor.commits} commits
+							<CardDescription className='flex divide-x'>
+								<p className='pr-1'>{activeContributor.commits} commits</p>
+								<p className='pl-1'>{activeContributor.owned} LoC</p>
 							</CardDescription>
 						</CardHeader>
-						<CardContent>
+						<CardContent className='flex flex-col gap-4'>
 							<section className='flex flex-col gap-2'>
-								<p className='text-sm'>{contributionPercentage}% contributed</p>
-								<section className='relative'>
-									<div className='h-2 w-full rounded-xl bg-green-300' />
-									<motion.div
-										animate={{ width: `${contributionPercentage}%` }}
-										className='absolute top-0 h-full rounded-xl bg-green-700'
-									/>
-								</section>
+								<p className='text-sm'>
+									{contributionPercentage}% commits contributed
+								</p>
+								<ProgressBar width={contributionPercentage} />
+							</section>
+							<section className='flex flex-col gap-2'>
+								<p className='text-sm'>
+									{contributionLoCPercentage}% loC contributed
+								</p>
+								<ProgressBar width={contributionLoCPercentage} />
 							</section>
 						</CardContent>
 					</Card>

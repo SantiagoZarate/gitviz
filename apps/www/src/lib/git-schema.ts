@@ -15,6 +15,8 @@ export const gitSchema = z
 				loc: z.coerce.number(),
 				// Removed
 				rm: z.coerce.number(),
+				// Owned
+				o: z.coerce.number(),
 			}),
 		),
 		// Github repo name
@@ -23,12 +25,13 @@ export const gitSchema = z
 		b: z.string(),
 	})
 	.transform(({ co, t, b }) => ({
-		contributors: co.map(({ n, c, e, loc, rm }) => ({
+		contributors: co.map(({ n, c, e, loc, rm, o }) => ({
 			name: n,
 			commits: c,
 			email: e,
 			linesOfCode: loc,
 			removed: rm,
+			owned: o,
 		})),
 		repoName: t,
 		branch: b,

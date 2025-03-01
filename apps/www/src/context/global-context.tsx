@@ -31,6 +31,8 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 		compressedData!,
 	);
 
+	console.log({ decompressed });
+
 	const parsedData = gitSchema.parse(JSON.parse(decompressed));
 	const [json, setJson] = useState(parsedData);
 
