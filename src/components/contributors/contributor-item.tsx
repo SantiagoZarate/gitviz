@@ -10,7 +10,7 @@ export function ContributorItem({ contributor, onDelete, onSelect }: Props) {
 	return (
 		<li
 			onClick={onSelect}
-			className='flex items-center justify-between gap-12 rounded-xl border p-2'
+			className='hover:-translate-y-1 flex cursor-pointer items-center justify-between gap-12 rounded-xl border p-2 transition hover:bg-secondary'
 		>
 			<section className='flex flex-col gap-1'>
 				<section className='flex flex-col gap-1'>

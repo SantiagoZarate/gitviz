@@ -32,7 +32,7 @@ export function PieChart({ data, config }: Props) {
 	}, [data]);
 
 	return (
-		<Card className='flex flex-col'>
+		<Card className='z-50 flex flex-col'>
 			<CardHeader className='items-center pb-0'>
 				<CardTitle>Pie Chart - Donut with Text</CardTitle>
 				<CardDescription>January - June 2024</CardDescription>
