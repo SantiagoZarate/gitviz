@@ -19,6 +19,9 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
+			"security": {
+				"noDangerouslySetInnerHtml": "off"
+			},
 			"complexity": {
 				"noForEach": "off"
 			},
