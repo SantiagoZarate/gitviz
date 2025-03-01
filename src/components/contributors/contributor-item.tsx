@@ -4,17 +4,24 @@ interface Props {
 	contributor: Contributor;
 	onDelete: () => void;
 	onSelect: () => void;
+	active?: boolean;
 }
 
-export function ContributorItem({ contributor, onDelete, onSelect }: Props) {
+export function ContributorItem({
+	contributor,
+	onDelete,
+	onSelect,
+	active = false,
+}: Props) {
 	return (
 		<li
+			data-active={active ? '' : undefined}
+			className='hover:-translate-y-1 group flex cursor-pointer items-center justify-between gap-12 rounded-xl border p-2 transition hover:bg-secondary data-active:bg-green-50'
 			onClick={onSelect}
-			className='hover:-translate-y-1 flex cursor-pointer items-center justify-between gap-12 rounded-xl border p-2 transition hover:bg-secondary'
 		>
 			<section className='flex flex-col gap-1'>
 				<section className='flex flex-col gap-1'>
-					<p>{contributor.n}</p>
+					<p className='group-data-active:font-semibold'>{contributor.n}</p>
 					<p className='text-xs'>{contributor.e}</p>
 				</section>
 				<section className='flex gap-2'>

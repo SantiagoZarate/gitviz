@@ -49,13 +49,15 @@ export function ActiveContributor() {
 							<CardDescription>{activeContributor.c} commits</CardDescription>
 						</CardHeader>
 						<CardContent>
-							<p>{contributionPercentage}% contributed</p>
-							<section className='relative'>
-								<div className='h-2 w-full rounded-xl bg-green-300' />
-								<div
-									style={{ width: `${contributionPercentage}%` }}
-									className='absolute top-0 h-full rounded-xl bg-green-700'
-								/>
+							<section className='flex flex-col gap-2'>
+								<p className='text-sm'>{contributionPercentage}% contributed</p>
+								<section className='relative'>
+									<div className='h-2 w-full rounded-xl bg-green-300' />
+									<motion.div
+										animate={{ width: `${contributionPercentage}%` }}
+										className='absolute top-0 h-full rounded-xl bg-green-700'
+									/>
+								</section>
 							</section>
 						</CardContent>
 					</Card>

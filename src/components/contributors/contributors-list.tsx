@@ -7,8 +7,12 @@ import { Input } from '../ui/input';
 import { ContributorItem } from './contributor-item';
 
 export function ContributorsList() {
-	const { contributors, deleteContributor, updateActiveContributor } =
-		useGitContext();
+	const {
+		contributors,
+		deleteContributor,
+		updateActiveContributor,
+		activeContributor,
+	} = useGitContext();
 	const [textFilter, setTextFilter] = useState<string>('');
 
 	const filteredContributors = contributors.filter(
@@ -38,6 +42,7 @@ export function ContributorsList() {
 					{filteredContributors.map((contributor) => (
 						<MotionItem key={contributor.n}>
 							<ContributorItem
+								active={activeContributor?.n === contributor.n}
 								onSelect={() => updateActiveContributor(contributor.n)}
 								onDelete={() => deleteContributor(contributor.n)}
 								contributor={contributor}
