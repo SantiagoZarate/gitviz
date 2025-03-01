@@ -3,6 +3,9 @@
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
+	"bin": {
+		"git-stats": "bin/index.ts"
+	},
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc -b && vite build",
@@ -22,6 +25,7 @@
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"recharts": "^2.15.1",
+		"simple-git": "3.27.0",
 		"tailwind-merge": "^3.0.2",
 		"tailwindcss-animate": "^1.0.7",
 		"zod": "3.24.1"
