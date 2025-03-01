@@ -1,5 +1,11 @@
 # @gitviz/cli
 
+## 0.0.4
+
+### Patch Changes
+
+- extract lines of codes owned by contributor
+
 ## 0.0.3
 
 ### Patch Changes
