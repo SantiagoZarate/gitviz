@@ -1,10 +1,10 @@
 {
 	"name": "@santiagozarate/gitviz",
 	"private": false,
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"type": "module",
 	"bin": {
-		"git-stats": "bin/index.ts"
+		"git-stats": "bin/index.js"
 	},
 	"scripts": {
 		"dev": "vite",

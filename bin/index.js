@@ -28,7 +28,7 @@ const getContributors = async () => {
 		{ encoding: 'utf-8' },
 	);
 
-	let currentContributor: unknown;
+	let currentContributor;
 
 	logOutput.split('\n').forEach((line) => {
 		const authorMatch = line.match(/(.+) <(.+)>/);
