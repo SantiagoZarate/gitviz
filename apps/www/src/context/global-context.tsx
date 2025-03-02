@@ -13,6 +13,7 @@ interface State {
 	contributors: Contributor[];
 	activeBranch: Branch;
 	title: string;
+	branchs: string[];
 }
 
 interface Actions {
@@ -62,6 +63,7 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 		<gitContext.Provider
 			value={{
 				// States
+				branchs: json.branchs.map((b) => b.name),
 				contributors: activeBranch.contributors,
 				activeContributor,
 				title: json.repoName,
