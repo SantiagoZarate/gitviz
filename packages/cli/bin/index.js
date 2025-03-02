@@ -18,9 +18,11 @@ const getRepoRoot = () => {
 // Get repository name from the root folder
 const getRepoName = () => path.basename(getRepoRoot());
 
-// Get current branch name
-const getBranch = async () =>
-	(await git.revparse(['--abbrev-ref', 'HEAD'])).trim();
+// Get all branches
+const getAllBranches = async () => {
+	const branches = await git.branchLocal(['--format="%(refname:short)"']);
+	return branches.all.map((branch) => branch.replace(/"/g, '')); // Remove quotes
+};
 
 // Get contributors and their commit stats
 const getContributors = async () => {
@@ -88,18 +90,37 @@ const getLineOwnership = async (contributors) => {
 	});
 };
 
-// Main function to gather Git stats
+// Main function to gather Git stats for all branches
 export const getGitStats = async () => {
-	const contributors = await getContributors();
-	await getLineOwnership(contributors);
+	const repoName = await getRepoName();
+	const branches = await getAllBranches();
 
-	const [repoName, branch] = await Promise.all([getRepoName(), getBranch()]);
+	const currentBranch = (await git.branchLocal(['--format="%(refname:short)"']))
+		.current;
+
+	console.log({ branches });
+	const branchData = [];
+
+	for (const branch of branches) {
+		await git.checkout(branch);
+		const contributors = await getContributors();
+		await getLineOwnership(contributors);
+
+		branchData.push({
+			name: branch,
+			co: Array.from(contributors.values()),
+		});
+	}
+
+	// Restore to the original branch
+	await git.checkout(currentBranch);
 
 	const data = {
-		co: Array.from(contributors.values()),
 		t: repoName,
-		b: branch,
+		b: branchData,
 	};
+
+	console.dir(data);
 
 	const compressed = LZString.compressToEncodedURIComponent(
 		JSON.stringify(data),
