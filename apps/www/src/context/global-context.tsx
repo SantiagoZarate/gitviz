@@ -16,7 +16,6 @@ interface State {
 }
 
 interface Actions {
-	deleteContributor: (name: string) => void;
 	updateActiveContributor: (name: string) => void;
 }
 
@@ -32,7 +31,7 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 	);
 
 	const parsedData = gitSchema.parse(JSON.parse(decompressed));
-	const [json, setJson] = useState(parsedData);
+	const [json] = useState(parsedData);
 
 	const [activeContributor, setActiveContributor] =
 		useState<Contributor | null>(null);
@@ -40,19 +39,6 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 	if (!json) {
 		return;
 	}
-
-	const handleRemoveContributor = (name: string) => {
-		setJson((prevState) => {
-			const filteredContributors = prevState?.contributors.filter(
-				(co) => co.name !== name,
-			);
-
-			return {
-				...prevState,
-				contributors: filteredContributors ?? [],
-			};
-		});
-	};
 
 	const handleUpdateActiveContributor = (name: string) => {
 		setActiveContributor((prevState) => {
@@ -74,7 +60,6 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 				branch: json.branch,
 				// Actions
 				updateActiveContributor: handleUpdateActiveContributor,
-				deleteContributor: handleRemoveContributor,
 			}}
 		>
 			{children}

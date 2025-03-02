@@ -2,14 +2,12 @@ import type { Contributor } from '@/lib/git-schema';
 
 interface Props {
 	contributor: Contributor;
-	onDelete: () => void;
 	onSelect: () => void;
 	active?: boolean;
 }
 
 export function ContributorItem({
 	contributor,
-	onDelete,
 	onSelect,
 	active = false,
 }: Props) {
@@ -35,13 +33,6 @@ export function ContributorItem({
 			</section>
 			<section className=''>
 				<p>{contributor.commits}</p>
-				<button
-					className='rounded-full bg-red-200 p-2'
-					onClick={onDelete}
-					type='button'
-				>
-					x
-				</button>
 			</section>
 		</li>
 	);
