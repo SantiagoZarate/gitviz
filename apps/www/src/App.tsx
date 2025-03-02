@@ -1,10 +1,11 @@
 import { generateChartConfig } from './components/charts/generate-chart-config';
 import { PieChart } from './components/charts/pie-chart';
-import { Header } from './components/common/header';
+import { RepoHeader } from './components/common/repo-header';
 import { ActiveContributor } from './components/contributors/active-contributor';
 import { ContributorsList } from './components/contributors/contributors-list';
 import { useGitContext } from './context/global-context';
 import { cleanEmail } from './helpers/clean-email';
+import { AppLayout } from './layout/app-layout';
 
 export default function App() {
 	const { contributors } = useGitContext();
@@ -21,17 +22,19 @@ export default function App() {
 	});
 
 	return (
-		<section className='mx-auto grid min-h-dvh w-full max-w-tablet grid-rows-[auto_1fr] gap-12 px-6 py-20'>
-			<Header />
-			<section className='grid h-full grid-cols-2 gap-6'>
-				<section className='relative'>
-					<section className='sticky top-12 flex flex-col gap-2'>
-						<PieChart data={dataForChart} config={chartConfig} />
-						<ActiveContributor />
+		<AppLayout>
+			<section className='mx-auto grid min-h-dvh w-full max-w-tablet grid-rows-[auto_1fr] gap-12 py-20'>
+				<RepoHeader />
+				<section className='grid h-full grid-cols-2 gap-6'>
+					<section className='relative'>
+						<section className='sticky top-12 flex flex-col gap-2'>
+							<PieChart data={dataForChart} config={chartConfig} />
+							<ActiveContributor />
+						</section>
 					</section>
+					<ContributorsList />
 				</section>
-				<ContributorsList />
 			</section>
-		</section>
+		</AppLayout>
 	);
 }
