@@ -4,7 +4,8 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "bun --filter @gitviz/client dev"
+		"dev": "bun --filter @gitviz/client dev",
+		"cli": "bun --filter @santiagozarate/gitviz dev"
 	},
 	"devDependencies": {
 		"@commitlint/config-conventional": "19.7.1",

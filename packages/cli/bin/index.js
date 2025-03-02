@@ -117,4 +117,4 @@ export const getGitStats = async () => {
 };
 
 // Execute and log result
-getGitStats().then().catch(console.error);
+getGitStats();
