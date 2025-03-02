@@ -40,8 +40,6 @@ export function ActiveContributor() {
 		100
 	).toFixed(2);
 
-	console.log({ contributionPercentage });
-
 	return (
 		<AnimatePresence>
 			{activeContributor !== null && (
