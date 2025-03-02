@@ -2,7 +2,7 @@ import { generateChartConfig } from './components/charts/generate-chart-config';
 import { PieChart } from './components/charts/pie-chart';
 import { RepoHeader } from './components/common/repo-header';
 import { ActiveContributor } from './components/contributors/active-contributor';
-import { ContributorsList } from './components/contributors/contributors-list';
+import { Contributors } from './components/contributors/contributors';
 import { useGitContext } from './context/global-context';
 import { cleanEmail } from './helpers/clean-email';
 import { AppLayout } from './layout/app-layout';
@@ -32,7 +32,7 @@ export default function App() {
 							<ActiveContributor />
 						</section>
 					</section>
-					<ContributorsList />
+					<Contributors />
 				</section>
 			</section>
 		</AppLayout>

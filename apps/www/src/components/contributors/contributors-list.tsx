@@ -1,52 +1,35 @@
 import { useGitContext } from '@/context/global-context';
+import type { ContributorMultiNames } from '@/helpers/merge-contributor';
 import { AnimatePresence } from 'motion/react';
-import { useState } from 'react';
 import { MotionItem } from '../motion/motion-item';
 import { MotionList } from '../motion/motion-list';
-import { Input } from '../ui/input';
 import { ContributorItem } from './contributor-item';
+import { EmptyContributors } from './empty-contributors';
 
-export function ContributorsList() {
-	const { contributors, updateActiveContributor, activeContributor } =
-		useGitContext();
-	const [textFilter, setTextFilter] = useState<string>('');
+interface Props {
+	contributors: ContributorMultiNames[];
+}
 
-	const filteredContributors = contributors.filter((c) =>
-		c.name.some((n) =>
-			n.toLocaleLowerCase().includes(textFilter.toLocaleLowerCase()),
-		),
-	);
+export function ContributorsList({ contributors }: Props) {
+	const { activeContributor, updateActiveContributor } = useGitContext();
 
-	const handleUpdateText = (newValue: string) => {
-		if (newValue.startsWith(' ')) return;
-		setTextFilter(newValue);
-	};
+	if (!contributors.length) {
+		return <EmptyContributors />;
+	}
 
 	return (
-		<section className='flex flex-col gap-4'>
-			<header className='flex flex-col gap-2'>
-				<h3>Contributors</h3>
-			</header>
-			<section className='flex flex-col gap-2'>
-				<label htmlFor='contributor'>Filter by contributor name</label>
-				<Input
-					onChange={(e) => handleUpdateText(e.target.value)}
-					placeholder='John Doe'
-				/>
-			</section>
-			<MotionList className='flex flex-col gap-2'>
-				<AnimatePresence mode='popLayout'>
-					{filteredContributors.map((contributor) => (
-						<MotionItem key={contributor.email}>
-							<ContributorItem
-								active={activeContributor?.email === contributor.email}
-								onSelect={() => updateActiveContributor(contributor.email)}
-								contributor={contributor}
-							/>
-						</MotionItem>
-					))}
-				</AnimatePresence>
-			</MotionList>
-		</section>
+		<MotionList className='flex flex-col gap-2'>
+			<AnimatePresence mode='popLayout'>
+				{contributors.map((contributor) => (
+					<MotionItem key={contributor.email}>
+						<ContributorItem
+							active={activeContributor?.email === contributor.email}
+							onSelect={() => updateActiveContributor(contributor.email)}
+							contributor={contributor}
+						/>
+					</MotionItem>
+				))}
+			</AnimatePresence>
+		</MotionList>
 	);
 }
