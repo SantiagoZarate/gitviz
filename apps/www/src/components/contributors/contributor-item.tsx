@@ -1,7 +1,7 @@
-import type { Contributor } from '@/lib/git-schema';
+import type { ContributorMultiNames } from '@/helpers/merge-contributor';
 
 interface Props {
-	contributor: Contributor;
+	contributor: ContributorMultiNames;
 	onSelect: () => void;
 	active?: boolean;
 }
@@ -19,7 +19,13 @@ export function ContributorItem({
 		>
 			<section className='flex flex-col gap-1'>
 				<section className='flex flex-col gap-1'>
-					<p className='group-data-active:font-semibold'>{contributor.name}</p>
+					<section className='flex gap-2'>
+						{contributor.name.map((name) => (
+							<p key={name} className='group-data-active:font-semibold'>
+								{name}
+							</p>
+						))}
+					</section>
 					<p className='text-xs'>{contributor.email}</p>
 				</section>
 				<section className='flex gap-2'>

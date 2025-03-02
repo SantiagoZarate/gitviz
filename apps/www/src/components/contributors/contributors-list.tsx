@@ -11,9 +11,10 @@ export function ContributorsList() {
 		useGitContext();
 	const [textFilter, setTextFilter] = useState<string>('');
 
-	const filteredContributors = contributors.filter(
-		(c) =>
-			c.name.toLocaleLowerCase().indexOf(textFilter.toLocaleLowerCase()) !== -1,
+	const filteredContributors = contributors.filter((c) =>
+		c.name.some((n) =>
+			n.toLocaleLowerCase().includes(textFilter.toLocaleLowerCase()),
+		),
 	);
 
 	const handleUpdateText = (newValue: string) => {
@@ -36,10 +37,10 @@ export function ContributorsList() {
 			<MotionList className='flex flex-col gap-2'>
 				<AnimatePresence mode='popLayout'>
 					{filteredContributors.map((contributor) => (
-						<MotionItem key={contributor.name}>
+						<MotionItem key={contributor.email}>
 							<ContributorItem
-								active={activeContributor?.name === contributor.name}
-								onSelect={() => updateActiveContributor(contributor.name)}
+								active={activeContributor?.email === contributor.email}
+								onSelect={() => updateActiveContributor(contributor.email)}
 								contributor={contributor}
 							/>
 						</MotionItem>

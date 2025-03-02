@@ -4,19 +4,20 @@ import { Header } from './components/common/header';
 import { ActiveContributor } from './components/contributors/active-contributor';
 import { ContributorsList } from './components/contributors/contributors-list';
 import { useGitContext } from './context/global-context';
+import { cleanEmail } from './helpers/clean-email';
 
 export default function App() {
 	const { contributors } = useGitContext();
 
 	const dataForChart =
-		contributors.map((contributor) => ({
-			dataKey: contributor.commits,
-			nameKey: contributor.name,
-			fill: `var(--color-${contributor.name})`,
+		contributors.map(({ commits, email }) => ({
+			dataKey: commits,
+			nameKey: email,
+			fill: `var(--color-${cleanEmail(email)})`,
 		})) ?? [];
 
 	const chartConfig = generateChartConfig({
-		data: contributors.map((c) => c.name) ?? [''],
+		data: contributors.map((c) => ({ email: c.email, name: c.name[0] })) ?? [],
 	});
 
 	return (
