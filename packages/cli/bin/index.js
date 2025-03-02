@@ -107,7 +107,7 @@ export const getGitStats = async () => {
 		await getLineOwnership(contributors);
 
 		branchData.push({
-			name: branch,
+			n: branch,
 			co: Array.from(contributors.values()),
 		});
 	}
@@ -131,7 +131,7 @@ export const getGitStats = async () => {
 			? 'http://localhost:5173'
 			: 'https://git-viz.netlify.app';
 
-	const url = `${clientUrl}/?q=${compressed}`;
+	const url = `${clientUrl}/stats/?q=${compressed}`;
 	await open(url);
 
 	return data;
