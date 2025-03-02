@@ -110,8 +110,8 @@ export const getGitStats = async () => {
 	}
 
 	// Restore to the original branch
-	const currentBranch = await git.revparse(['--abbrev-ref', 'HEAD']);
-	await git.checkout(currentBranch);
+	const currentBranch = await git.branchLocal(['--abbrev-ref', 'HEAD']);
+	await git.checkout(currentBranch.current);
 
 	const data = {
 		t: repoName,
