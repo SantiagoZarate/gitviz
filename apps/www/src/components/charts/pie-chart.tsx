@@ -16,6 +16,8 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from '@/components/ui/chart';
+import { useGitContext } from '@/context/global-context';
+import type { RechartEventHandler } from '@/types/rechart-event-handler.type';
 
 interface Props {
 	data: {
@@ -30,6 +32,8 @@ export function PieChart({ data, config }: Props) {
 	const totalVisitors = React.useMemo(() => {
 		return data.reduce((acc, curr) => acc + curr.dataKey, 0);
 	}, [data]);
+
+	const { updateActiveContributor } = useGitContext();
 
 	return (
 		<Card className='z-50 flex flex-col'>
@@ -48,6 +52,10 @@ export function PieChart({ data, config }: Props) {
 							content={<ChartTooltipContent hideLabel />}
 						/>
 						<Pie
+							onClick={(e: RechartEventHandler) =>
+								updateActiveContributor(e.name)
+							}
+							className='cursor-pointer'
 							data={data}
 							dataKey='dataKey'
 							nameKey='nameKey'
