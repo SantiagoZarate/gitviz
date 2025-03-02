@@ -1,8 +1,4 @@
-import {
-	type ContributorMultiNames,
-	mergeContributor,
-} from '@/helpers/merge-contributor';
-import { gitSchema } from '@/lib/git-schema';
+import { type Branch, type Contributor, gitSchema } from '@/lib/git-schema';
 import LZString from 'lz-string';
 import { parseAsString, useQueryState } from 'nuqs';
 import {
@@ -13,10 +9,10 @@ import {
 } from 'react';
 
 interface State {
-	activeContributor: ContributorMultiNames | null;
-	contributors: ContributorMultiNames[];
+	activeContributor: Contributor | null;
+	contributors: Contributor[];
+	activeBranch: Branch;
 	title: string;
-	branch: string;
 }
 
 interface Actions {
@@ -37,13 +33,16 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 	const parsedData = gitSchema.parse(JSON.parse(decompressed));
 	const [json] = useState({
 		...parsedData,
-		contributors: mergeContributor(parsedData.contributors).sort(
-			(a, b) => b.commits - a.commits,
-		),
+		branchs: parsedData.branchs.map((branch) => ({
+			...branch,
+			contributors: branch.contributors,
+		})),
 	});
 
+	const [activeBranch, setActiveBranch] = useState<Branch>(json.branchs[0]);
+
 	const [activeContributor, setActiveContributor] =
-		useState<ContributorMultiNames | null>(null);
+		useState<Contributor | null>(null);
 
 	if (!json) {
 		return;
@@ -55,7 +54,7 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 				return null;
 			}
 
-			return json.contributors.find((c) => c.email === email)!;
+			return activeBranch.contributors.find((c) => c.email === email)!;
 		});
 	};
 
@@ -63,10 +62,10 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 		<gitContext.Provider
 			value={{
 				// States
-				contributors: json.contributors,
+				contributors: activeBranch.contributors,
 				activeContributor,
 				title: json.repoName,
-				branch: json.branch,
+				activeBranch,
 				// Actions
 				updateActiveContributor: handleUpdateActiveContributor,
 			}}

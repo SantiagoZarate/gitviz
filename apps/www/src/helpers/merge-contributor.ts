@@ -1,27 +1,30 @@
-import type { Contributor } from '@/lib/git-schema';
-
-export type ContributorMultiNames = Omit<Contributor, 'name'> & {
-	name: string[];
-};
+import type { Contributor, RawContributor } from '@/lib/git-schema';
 
 export function mergeContributor(
-	contributors: Contributor[],
-): ContributorMultiNames[] {
-	const aux = new Map<string, ContributorMultiNames>();
+	contributors: RawContributor[],
+): Contributor[] {
+	const aux = new Map<string, Contributor>();
 
 	contributors.forEach((c) => {
-		if (aux.has(c.email)) {
+		if (aux.has(c.e)) {
 			// Sumar las estadisticas
-			const existing = aux.get(c.email)!;
+			const existing = aux.get(c.e)!;
 			// if (!existing.name.includes(c.name))
-			existing.name.push(c.name);
-			existing.commits += c.commits;
-			existing.linesOfCode += c.linesOfCode;
-			existing.removed += c.removed;
-			existing.owned += c.owned;
+			existing.name.push(c.n);
+			existing.commits += c.c;
+			existing.linesOfCode += c.loc;
+			existing.removed += c.rm;
+			existing.owned += c.o;
 		} else {
 			// Agregarlo
-			aux.set(c.email, { ...c, name: [c.name] });
+			aux.set(c.e, {
+				commits: c.c,
+				email: c.e,
+				linesOfCode: c.loc,
+				owned: c.o,
+				removed: c.rm,
+				name: [c.n],
+			});
 		}
 	});
 
