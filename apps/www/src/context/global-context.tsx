@@ -31,8 +31,6 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 		compressedData!,
 	);
 
-	console.log({ decompressed });
-
 	const parsedData = gitSchema.parse(JSON.parse(decompressed));
 	const [json, setJson] = useState(parsedData);
 
@@ -70,7 +68,7 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 		<gitContext.Provider
 			value={{
 				// States
-				contributors: json?.contributors,
+				contributors: json?.contributors.sort((a, b) => b.commits - a.commits),
 				activeContributor,
 				title: json.repoName,
 				branch: json.branch,
