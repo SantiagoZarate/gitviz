@@ -14,7 +14,7 @@ export function ContributorItem({
 	return (
 		<li
 			data-active={active ? '' : undefined}
-			className='hover:-translate-y-1 group flex cursor-pointer items-center justify-between gap-12 rounded-xl border p-2 transition hover:bg-secondary data-active:bg-green-50'
+			className='hover:-translate-y-1 group flex cursor-pointer items-center justify-between gap-12 rounded-xl border p-2 transition hover:bg-secondary data-active:bg-green-500/20'
 			onClick={onSelect}
 		>
 			<section className='flex flex-col gap-1'>

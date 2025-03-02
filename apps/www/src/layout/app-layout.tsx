@@ -5,7 +5,7 @@ export function AppLayout({ children }: PropsWithChildren) {
 	return (
 		<section className='px-6'>
 			<Header />
-			{children}
+			<section className='pt-[59px]'>{children}</section>
 		</section>
 	);
 }

@@ -12,6 +12,7 @@
 	},
 	"dependencies": {
 		"@radix-ui/react-slot": "^1.1.2",
+		"@tanstack/react-router": "1.112.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"lucide-react": "^0.476.0",
@@ -28,6 +29,8 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"@tailwindcss/vite": "4.0.4",
+		"@tanstack/router-devtools": "1.112.6",
+		"@tanstack/router-plugin": "1.112.3",
 		"@types/node": "22.13.5",
 		"@types/react": "^19.0.8",
 		"@types/react-dom": "^19.0.3",
