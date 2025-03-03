@@ -7,6 +7,8 @@ import open from 'open';
 import simpleGit from 'simple-git';
 
 const git = simpleGit();
+const args = process.argv.slice(2);
+const FETCH_REMOTE = args.includes('--fetch-remote') || args.includes('-r');
 
 // Colored console output
 const colors = {
@@ -38,6 +40,32 @@ const getRepoRoot = () => {
 
 // Get repository name from the root folder
 const getRepoName = () => path.basename(getRepoRoot());
+
+// Fetch remote branches (if flag is set)
+const fetchRemoteBranches = async () => {
+	log.info('Fetching remote branches...');
+	await git.fetch();
+	const remoteBranches = childProcess
+		.execSync('git branch -r', { encoding: 'utf-8' })
+		.split('\n')
+		.map((branch) => branch.trim())
+		.filter((branch) => branch && !branch.includes('->')); // Ignore HEAD -> main
+
+	// Ensure remote branches are tracked locally
+	for (const remoteBranch of remoteBranches) {
+		const localBranch = remoteBranch.replace(/^origin\//, '');
+		const isTracked = childProcess
+			.execSync('git branch', { encoding: 'utf-8' })
+			.includes(localBranch);
+
+		if (!isTracked) {
+			log.info(`Tracking remote branch: ${remoteBranch} as ${localBranch}`);
+			await git.checkout(['-b', localBranch, '--track', remoteBranch]);
+		}
+	}
+
+	log.success('Remote branches fetched and tracked.');
+};
 
 // Get all branches
 const getAllBranches = async () => {
@@ -117,6 +145,10 @@ export const getGitStats = async () => {
 	const repoName = await getRepoName();
 	log.success(`Repository detected: ${repoName}`);
 
+	if (FETCH_REMOTE) {
+		await fetchRemoteBranches();
+	}
+
 	const branches = await getAllBranches();
 	const currentBranch = (await git.branchLocal(['--format="%(refname:short)"']))
 		.current;
@@ -168,4 +200,4 @@ export const getGitStats = async () => {
 };
 
 // Execute and log result
-getGitStats();
+getGitStats().catch(console.log());
