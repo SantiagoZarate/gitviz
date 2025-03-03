@@ -8,11 +8,32 @@ import simpleGit from 'simple-git';
 
 const git = simpleGit();
 
+// Colored console output
+const colors = {
+	reset: '\x1b[0m',
+	green: '\x1b[32m',
+	yellow: '\x1b[33m',
+	blue: '\x1b[34m',
+	red: '\x1b[31m',
+};
+
+const log = {
+	info: (msg) => console.log(`${colors.blue}ℹ${colors.reset} ${msg}`),
+	success: (msg) => console.log(`${colors.green}✓${colors.reset} ${msg}`),
+	warn: (msg) => console.log(`${colors.yellow}⚠${colors.reset} ${msg}`),
+	error: (msg) => console.error(`${colors.red}✕${colors.reset} ${msg}`),
+};
+
 // Get repository root directory
 const getRepoRoot = () => {
-	return childProcess
-		.execSync('git rev-parse --show-toplevel', { encoding: 'utf-8' })
-		.trim();
+	try {
+		return childProcess
+			.execSync('git rev-parse --show-toplevel', { encoding: 'utf-8' })
+			.trim();
+	} catch (err) {
+		log.error('Not a Git repository. Please run this inside a Git project.');
+		process.exit(1);
+	}
 };
 
 // Get repository name from the root folder
@@ -21,7 +42,7 @@ const getRepoName = () => path.basename(getRepoRoot());
 // Get all branches
 const getAllBranches = async () => {
 	const branches = await git.branchLocal(['--format="%(refname:short)"']);
-	return branches.all.map((branch) => branch.replace(/"/g, '')); // Remove quotes
+	return branches.all.map((branch) => branch.replace(/"/g, ''));
 };
 
 // Get contributors and their commit stats
@@ -92,17 +113,22 @@ const getLineOwnership = async (contributors) => {
 
 // Main function to gather Git stats for all branches
 export const getGitStats = async () => {
+	log.info('Starting Git analysis...');
 	const repoName = await getRepoName();
-	const branches = await getAllBranches();
+	log.success(`Repository detected: ${repoName}`);
 
+	const branches = await getAllBranches();
 	const currentBranch = (await git.branchLocal(['--format="%(refname:short)"']))
 		.current;
 
-	console.log({ branches });
+	log.info(`Current branch: ${currentBranch}`);
+	log.info(`Processing ${branches.length} branches...`);
+
 	const branchData = [];
 
 	for (const branch of branches) {
 		await git.checkout(branch);
+
 		const contributors = await getContributors();
 		await getLineOwnership(contributors);
 
@@ -120,6 +146,10 @@ export const getGitStats = async () => {
 		b: branchData,
 	};
 
+	log.success('Git analysis completed successfully.');
+
+	// Compress and open in browser
+	log.info('Opening visualization in browser...');
 	const compressed = LZString.compressToEncodedURIComponent(
 		JSON.stringify(data),
 	);
@@ -131,6 +161,8 @@ export const getGitStats = async () => {
 
 	const url = `${clientUrl}/stats/?q=${compressed}`;
 	await open(url);
+
+	log.success('Done!');
 
 	return data;
 };
