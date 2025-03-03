@@ -7,126 +7,62 @@ import open from 'open';
 import simpleGit from 'simple-git';
 
 const git = simpleGit();
-const args = process.argv.slice(2);
-const FETCH_REMOTE = args.includes('--fetch-remote') || args.includes('-r');
 
-const colors = {
-	reset: '\x1b[0m',
-	green: '\x1b[32m',
-	yellow: '\x1b[33m',
-	blue: '\x1b[34m',
-	red: '\x1b[31m',
-};
-
-const log = {
-	info: (msg) => console.log(`${colors.blue}ℹ${colors.reset} ${msg}`),
-	success: (msg) => console.log(`${colors.green}✓${colors.reset} ${msg}`),
-	warn: (msg) => console.log(`${colors.yellow}⚠${colors.reset} ${msg}`),
-	error: (msg) => console.error(`${colors.red}✕${colors.reset} ${msg}`),
-};
-
+// Get repository root directory
 const getRepoRoot = () => {
-	try {
-		return childProcess
-			.execSync('git rev-parse --show-toplevel', { encoding: 'utf-8' })
-			.trim();
-	} catch (err) {
-		log.error('Not a Git repository. Please run this inside a Git project.');
-		process.exit(1);
-	}
+	return childProcess
+		.execSync('git rev-parse --show-toplevel', { encoding: 'utf-8' })
+		.trim();
 };
 
+// Get repository name from the root folder
 const getRepoName = () => path.basename(getRepoRoot());
 
-const stashChanges = async () => {
-	try {
-		const status = await git.status();
-		if (status.files.length > 0 || status.not_added.length > 0) {
-			log.info('Stashing uncommitted and untracked changes...');
-			await git.stash([
-				'push',
-				'--include-untracked',
-				'-m',
-				'Temporary stash before branch switch',
-			]);
-			return true; // Indicate that a stash was created
-		}
-	} catch (error) {
-		log.error('Failed to stash changes.');
-		process.exit(1);
-	}
-	return false;
-};
-
-const popStash = async () => {
-	try {
-		const stashList = await git.stashList();
-		if (stashList.total > 0) {
-			log.info('Restoring stashed changes...');
-			await git.stash(['pop']);
-		}
-	} catch (error) {
-		log.error('Failed to restore stashed changes.');
-	}
-};
-
-const fetchRemoteBranches = async () => {
-	log.info('Fetching remote branches...');
-	await git.fetch();
-	const remoteBranches = childProcess
-		.execSync('git branch -r', { encoding: 'utf-8' })
-		.split('\n')
-		.map((branch) => branch.trim())
-		.filter((branch) => branch && !branch.includes('->'));
-
-	for (const remoteBranch of remoteBranches) {
-		const localBranch = remoteBranch.replace(/^origin\//, '');
-		const isTracked = childProcess
-			.execSync('git branch', { encoding: 'utf-8' })
-			.includes(localBranch);
-
-		if (!isTracked) {
-			log.info(`Tracking remote branch: ${remoteBranch} as ${localBranch}`);
-			await git.checkout(['-b', localBranch, '--track', remoteBranch]);
-		}
-	}
-
-	log.success('Remote branches fetched and tracked.');
-};
-
+// Get all branches
 const getAllBranches = async () => {
 	const branches = await git.branchLocal(['--format="%(refname:short)"']);
-	return branches.all.map((branch) => branch.replace(/"/g, ''));
+	return branches.all.map((branch) => branch.replace(/"/g, '')); // Remove quotes
 };
 
+// Get contributors and their commit stats
 const getContributors = async () => {
 	const contributors = new Map();
 
 	const logOutput = childProcess.execSync(
-		'git log --pretty=format:"%an <%ae>" --shortstat',
+		'git log --pretty=format:"|||%n%an <%ae> %ad" --date=iso --shortstat',
 		{ encoding: 'utf-8' },
 	);
 
 	let currentContributor;
 
-	logOutput.split('\n').forEach((line) => {
-		const authorMatch = line.match(/(.+) <(.+)>/);
+	const splittedLog = logOutput.split('|||');
+
+	splittedLog.forEach((line) => {
+		// console.log({ line });
+		const authorMatch = line.match(/(.+) <(.+)> (.+)/);
 		if (authorMatch) {
-			const [, name, email] = authorMatch;
+			const [, name, email, date] = authorMatch;
 			const key = `${name}|${email}`;
 
 			if (!contributors.has(key)) {
 				contributors.set(key, {
 					n: name,
 					e: email,
-					c: 0,
+					c: [],
 					loc: 0,
 					rm: 0,
 					o: 0,
 				});
 			}
+
 			currentContributor = key;
-			contributors.get(key).c += 1;
+			const contributor = contributors.get(key);
+
+			const commit = {
+				date: date,
+			};
+
+			contributor.c.push(commit);
 		} else if (currentContributor && line.includes('file changed')) {
 			const locMatch = line.match(/(\d+) insertions?/);
 			const rmMatch = line.match(/(\d+) deletions?/);
@@ -143,6 +79,7 @@ const getContributors = async () => {
 	return contributors;
 };
 
+// Get total lines owned per author using git blame
 const getLineOwnership = async (contributors) => {
 	const repoRoot = getRepoRoot();
 	const blameOutput = childProcess.execSync(
@@ -163,75 +100,52 @@ const getLineOwnership = async (contributors) => {
 	});
 };
 
+// Main function to gather Git stats for all branches
 export const getGitStats = async () => {
-	log.info('Starting Git analysis...');
 	const repoName = await getRepoName();
-	log.success(`Repository detected: ${repoName}`);
+	const branches = await getAllBranches();
 
-	let stashCreated = false;
+	const currentBranch = (await git.branchLocal(['--format="%(refname:short)"']))
+		.current;
 
-	try {
-		if (FETCH_REMOTE) {
-			stashCreated = await stashChanges();
-			await fetchRemoteBranches();
-		}
+	const branchData = [];
 
-		const branches = await getAllBranches();
-		const currentBranch = (
-			await git.branchLocal(['--format="%(refname:short)"'])
-		).current;
+	for (const branch of branches) {
+		await git.checkout(branch);
+		const contributors = await getContributors();
+		contributors.forEach((c) => {
+			c.c.forEach((com) => console.log({ com }));
+		});
+		await getLineOwnership(contributors);
 
-		log.info(`Current branch: ${currentBranch}`);
-		log.info(`Processing ${branches.length} branches...`);
-
-		const branchData = [];
-
-		for (const branch of branches) {
-			await git.checkout(branch);
-
-			const contributors = await getContributors();
-			await getLineOwnership(contributors);
-
-			branchData.push({
-				n: branch,
-				co: Array.from(contributors.values()),
-			});
-		}
-
-		// Restore to the original branch
-		await git.checkout(currentBranch);
-
-		const data = {
-			t: repoName,
-			b: branchData,
-		};
-
-		log.success('Git analysis completed successfully.');
-
-		// Compress and open in browser
-		log.info('Opening visualization in browser...');
-		const compressed = LZString.compressToEncodedURIComponent(
-			JSON.stringify(data),
-		);
-
-		const clientUrl =
-			process.env.NODE_ENV === 'development'
-				? 'http://localhost:5173'
-				: 'https://git-viz.netlify.app';
-
-		const url = `${clientUrl}/stats/?q=${compressed}`;
-		await open(url);
-
-		log.success('Done!');
-
-		if (stashCreated) await popStash();
-
-		return data;
-	} catch (error) {
-		log.error(`Error: ${error.message}`);
-		if (stashCreated) await popStash(); // Restore stash if something goes wrong
-		process.exit(1);
+		branchData.push({
+			n: branch,
+			co: Array.from(contributors.values()),
+		});
 	}
+
+	// Restore to the original branch
+	await git.checkout(currentBranch);
+
+	const data = {
+		t: repoName,
+		b: branchData,
+	};
+
+	const compressed = LZString.compressToEncodedURIComponent(
+		JSON.stringify(data),
+	);
+
+	const clientUrl =
+		process.env.NODE_ENV === 'development'
+			? 'http://localhost:5173'
+			: 'https://git-viz.netlify.app';
+
+	const url = `${clientUrl}/stats/?q=${compressed}`;
+	await open(url);
+
+	return data;
 };
 
-getGitStats().catch(console.log);
+// Execute and log result
+getGitStats();
