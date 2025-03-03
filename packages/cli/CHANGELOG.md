@@ -1,5 +1,11 @@
 # @gitviz/cli
 
+## 0.0.12
+
+### Patch Changes
+
+- remove loc and rm for each commit
+
 ## 0.0.11
 
 ### Patch Changes
