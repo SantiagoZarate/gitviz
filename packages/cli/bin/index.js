@@ -40,43 +40,51 @@ const getContributors = async () => {
 	splittedLog.forEach((line) => {
 		// console.log({ line });
 		const authorMatch = line.match(/(.+) <(.+)> (.+)/);
-		if (authorMatch) {
-			const [, name, email, date] = authorMatch;
-			const key = `${name}|${email}`;
-
-			if (!contributors.has(key)) {
-				contributors.set(key, {
-					n: name,
-					e: email,
-					c: [],
-					loc: 0,
-					rm: 0,
-					o: 0,
-				});
-			}
-
-			currentContributor = key;
-			const contributor = contributors.get(key);
-
-			const commit = {
-				d: date,
-			};
-
-			contributor.c.push(commit);
-		} else if (currentContributor && line.includes('file changed')) {
-			const locMatch = line.match(/(\d+) insertions?/);
-			const rmMatch = line.match(/(\d+) deletions?/);
-
-			if (locMatch)
-				contributors.get(currentContributor).loc += Number.parseInt(
-					locMatch[1],
-				);
-			if (rmMatch)
-				contributors.get(currentContributor).rm += Number.parseInt(rmMatch[1]);
+		if (!authorMatch) {
+			return;
 		}
+
+		const [, name, email, date] = authorMatch;
+		const key = `${name}|${email}`;
+
+		if (!contributors.has(key)) {
+			contributors.set(key, {
+				n: name,
+				e: email,
+				c: [],
+				o: 0,
+			});
+		}
+
+		currentContributor = key;
+		const contributor = contributors.get(key);
+
+		const commit = {
+			d: date,
+			loc: 0,
+			rm: 0,
+		};
+
+		if (currentContributor) {
+			const { deletions, insertions } = extractChanges(line);
+			commit.loc = insertions;
+			commit.rm = deletions;
+		}
+
+		contributor.c.push(commit);
 	});
 
 	return contributors;
+};
+
+const extractChanges = (line) => {
+	const locMatch = line.match(/(\d+) insertions?\(\+\)/);
+	const rmMatch = line.match(/(\d+) deletions?\(-\)/);
+
+	const insertions = locMatch ? Number.parseInt(locMatch[1], 10) : 0;
+	const deletions = rmMatch ? Number.parseInt(rmMatch[1], 10) : 0;
+
+	return { insertions, deletions };
 };
 
 // Get total lines owned per author using git blame
@@ -113,9 +121,9 @@ export const getGitStats = async () => {
 	for (const branch of branches) {
 		await git.checkout(branch);
 		const contributors = await getContributors();
-		contributors.forEach((c) => {
-			c.c.forEach((com) => console.log({ com }));
-		});
+		// contributors.forEach((c) => {
+		// 	c.c.forEach((com) => console.log({ com }));
+		// });
 		await getLineOwnership(contributors);
 
 		branchData.push({
