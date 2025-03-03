@@ -1,4 +1,5 @@
 import { useGitContext } from '@/context/global-context';
+import { formatCommitDate } from '@/lib/format-commit-date';
 import { AnimatePresence, type Variants, motion } from 'motion/react';
 import {
 	Card,
@@ -81,6 +82,22 @@ export function ActiveContributor() {
 									{contributionLoCPercentage}% loC contributed
 								</p>
 								<ProgressBar width={contributionLoCPercentage} />
+							</section>
+							<section className='flex flex-col gap-2'>
+								<section>
+									<p className='text-primary/50 text-sm'>Latest contribution</p>
+									<p>{formatCommitDate(activeContributor.commits[0].date)}</p>
+								</section>
+								<section>
+									<p className='text-primary/50 text-sm'>First contribution</p>
+									<p>
+										{formatCommitDate(
+											activeContributor.commits[
+												activeContributor.commits.length - 1
+											].date,
+										)}
+									</p>
+								</section>
 							</section>
 						</CardContent>
 					</Card>
