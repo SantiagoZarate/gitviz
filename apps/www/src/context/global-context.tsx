@@ -53,14 +53,16 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 	useEffect(() => {
 		githubAPI
 			.getUsersInfo({ contributors: activeBranch.contributors })
-			.then(({ data }) => {
+			.then((response) => {
 				setActiveBranch((prevState) => {
+					if (!response) {
+						return prevState;
+					}
 					const contributorsWithAvatar = prevState.contributors.map(
 						(contributor) => {
-							const user = data[cleanEmail(contributor.email)];
+							const user = response.data[cleanEmail(contributor.email)];
 
-							const avatar =
-								user !== undefined ? user.nodes[0].avatarUrl : null;
+							const avatar = user.nodes[0].avatarUrl ?? null;
 
 							return {
 								...contributor,

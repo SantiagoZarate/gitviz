@@ -8,8 +8,6 @@ type getUserInfoProps = {
 
 export const githubAPI = {
 	async getUsersInfo({ contributors }: getUserInfoProps) {
-		// Filter out GitHub's anonymous emails
-
 		// Build a single GraphQL query
 		let query = 'query {';
 		contributors.forEach(({ email, name }) => {
@@ -36,8 +34,6 @@ export const githubAPI = {
 			}
 
 			const responseBody: GithubReponse = await response.json();
-
-			console.log({ responseBody });
 
 			return responseBody;
 		} catch (error) {

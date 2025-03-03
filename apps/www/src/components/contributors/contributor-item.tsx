@@ -19,9 +19,13 @@ export function ContributorItem({
 		>
 			<section className='flex flex-col gap-1'>
 				<section className='flex flex-col gap-1'>
-					<section className='flex gap-2'>
-						{contributor.name.map((name) => (
-							<p key={name} className='group-data-active:font-semibold'>
+					<section className='flex items-center divide-x *:px-1 [&>:first-child]:pr-1 [&>:last-child]:pl-1'>
+						{contributor.name.map((name, index) => (
+							<p
+								className='group not-data-first:text-primary/50 not-data-first:text-sm'
+								data-first={index === 0 ? '' : null}
+								key={name}
+							>
 								{name}
 							</p>
 						))}
