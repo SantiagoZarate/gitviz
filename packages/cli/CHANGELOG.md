@@ -1,5 +1,11 @@
 # @gitviz/cli
 
+## 0.0.10
+
+### Patch Changes
+
+- extract commit date
+
 ## 0.0.9
 
 ### Patch Changes
