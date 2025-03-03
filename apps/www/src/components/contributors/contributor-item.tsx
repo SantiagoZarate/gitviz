@@ -32,14 +32,14 @@ export function ContributorItem({
 					</section>
 					<p className='text-xs'>{contributor.email}</p>
 				</section>
-				<section className='flex gap-2'>
+				{/* <section className='flex gap-2'>
 					<span className='rounded-full bg-green-200 px-2 py-1 text-green-600 text-xs'>
 						{contributor.linesOfCode}
 					</span>
 					<span className='rounded-full bg-red-200 px-2 py-1 text-red-600 text-xs'>
 						{contributor.removed}
 					</span>
-				</section>
+				</section> */}
 			</section>
 			<section className=''>
 				<p>{contributor.commits.length}</p>

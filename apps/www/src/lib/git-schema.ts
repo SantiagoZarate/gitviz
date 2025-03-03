@@ -4,6 +4,10 @@ import { z } from 'zod';
 const commitSchema = z.object({
 	// date
 	d: z.string(),
+	// Lines of code
+	loc: z.coerce.number(),
+	// Removed
+	rm: z.coerce.number(),
 });
 
 const rawContributorSchema = z.object({
@@ -13,10 +17,6 @@ const rawContributorSchema = z.object({
 	c: z.array(commitSchema),
 	// Email
 	e: z.string().email(),
-	// Lines of code
-	loc: z.coerce.number(),
-	// Removed
-	rm: z.coerce.number(),
 	// Owned
 	o: z.coerce.number(),
 });
@@ -60,9 +60,9 @@ export type Contributor = {
 	name: string[];
 	commits: {
 		date: string;
+		linesOfCode: number;
+		removed: number;
 	}[];
-	linesOfCode: number;
-	removed: number;
 	owned: number;
 	email: string;
 	avatar?: string | null;

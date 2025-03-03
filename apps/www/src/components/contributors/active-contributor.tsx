@@ -44,6 +44,15 @@ export function ActiveContributor() {
 	const defaultPfp =
 		'https://preview.redd.it/default-pfp-v0-1to4yvt3i88c1.png?width=1080&crop=smart&auto=webp&s=67e1e2ad39382a1d2822a854781e441f33656554';
 
+	const linesOfCode = activeContributor?.commits.reduce(
+		(prev, curr) => prev + curr.linesOfCode,
+		0,
+	);
+	const removed = activeContributor?.commits.reduce(
+		(prev, curr) => prev + curr.removed,
+		0,
+	);
+
 	return (
 		<AnimatePresence>
 			{activeContributor !== null && (
@@ -71,6 +80,10 @@ export function ActiveContributor() {
 							</section>
 						</CardHeader>
 						<CardContent className='flex flex-col gap-4'>
+							<section>
+								<p>{linesOfCode} lines of code added</p>
+								<p>{removed} lines of code removed</p>
+							</section>
 							<section className='flex flex-col gap-2'>
 								<p className='text-sm'>
 									{contributionPercentage}% commits contributed
