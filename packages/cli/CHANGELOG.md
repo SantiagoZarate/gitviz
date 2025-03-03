@@ -1,5 +1,11 @@
 # @gitviz/cli
 
+## 0.0.9
+
+### Patch Changes
+
+- stash untracked files
+
 ## 0.0.8
 
 ### Patch Changes
