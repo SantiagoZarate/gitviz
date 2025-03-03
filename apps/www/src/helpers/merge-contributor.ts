@@ -15,8 +15,6 @@ export function mergeContributor(
 				...existing.commits,
 				...c.c.map((commit) => ({
 					date: commit.d,
-					linesOfCode: commit.loc,
-					removed: commit.rm,
 				})),
 			];
 			existing.owned += c.o;
@@ -25,9 +23,9 @@ export function mergeContributor(
 			aux.set(c.e, {
 				commits: c.c.map((commit) => ({
 					date: commit.d,
-					linesOfCode: commit.loc,
-					removed: commit.rm,
 				})),
+				linesOfCode: c.loc,
+				removed: c.rm,
 				email: c.e,
 				owned: c.o,
 				name: [c.n],
