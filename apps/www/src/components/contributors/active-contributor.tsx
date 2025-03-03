@@ -40,6 +40,9 @@ export function ActiveContributor() {
 		100
 	).toFixed(2);
 
+	const defaultPfp =
+		'https://preview.redd.it/default-pfp-v0-1to4yvt3i88c1.png?width=1080&crop=smart&auto=webp&s=67e1e2ad39382a1d2822a854781e441f33656554';
+
 	return (
 		<AnimatePresence>
 			{activeContributor !== null && (
@@ -51,15 +54,11 @@ export function ActiveContributor() {
 				>
 					<Card>
 						<CardHeader className='flex-row items-center gap-2'>
-							{activeContributor.avatar ? (
-								<img
-									className='size-10 rounded-md'
-									src={activeContributor.avatar}
-									alt='avatar profile'
-								/>
-							) : (
-								<div>lol</div>
-							)}
+							<img
+								className='size-10 rounded-md'
+								src={activeContributor.avatar ?? defaultPfp}
+								alt='avatar profile'
+							/>
 							<section className='flex flex-col gap-2'>
 								<CardTitle>{activeContributor.name}</CardTitle>
 								<CardDescription className='flex divide-x'>
