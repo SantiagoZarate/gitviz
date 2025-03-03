@@ -25,15 +25,24 @@ export const githubAPI = {
 			body: JSON.stringify({ query }),
 		};
 
-		const response = await fetch(
-			'https://api.github.com/graphql',
-			fetchOptions,
-		);
-		const responseBody: GithubReponse = await response.json();
+		try {
+			const response = await fetch(
+				'https://api.github.com/graphql',
+				fetchOptions,
+			);
+			if (!response.ok) {
+				const responseBody = await response.json();
+				throw new Error(responseBody.message);
+			}
 
-		console.log({ responseBody });
+			const responseBody: GithubReponse = await response.json();
 
-		return responseBody;
+			console.log({ responseBody });
+
+			return responseBody;
+		} catch (error) {
+			console.log({ error });
+		}
 	},
 };
 

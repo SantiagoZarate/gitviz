@@ -56,15 +56,23 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 			.then(({ data }) => {
 				setActiveBranch((prevState) => {
 					const contributorsWithAvatar = prevState.contributors.map(
-						(contributor) => ({
-							...contributor,
-							avatar: data[cleanEmail(contributor.email)].nodes[0].avatarUrl,
-						}),
+						(contributor) => {
+							const user = data[cleanEmail(contributor.email)];
+
+							const avatar =
+								user !== undefined ? user.nodes[0].avatarUrl : null;
+
+							return {
+								...contributor,
+								avatar,
+							};
+						},
 					);
 
 					return { ...prevState, contributors: contributorsWithAvatar };
 				});
-			});
+			})
+			.catch((e) => {});
 	}, [activeBranch.name]);
 
 	if (!json) {
