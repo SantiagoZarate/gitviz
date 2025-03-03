@@ -1,112 +1,17 @@
 #!/usr/bin/env node
 
 import LZString from 'lz-string';
-import childProcess from 'node:child_process';
-import path from 'node:path';
 import open from 'open';
 import simpleGit from 'simple-git';
+import { jsonToCsv } from '../helpers/json-to-csv';
 
-const git = simpleGit();
+// Helpers functions
+import { getAllBranches } from '../helpers/git/get-all-branches';
+import { getContributors } from '../helpers/git/get-contributors';
+import { getLineOwnership } from '../helpers/git/get-line-ownership';
+import { getRepoName } from '../helpers/git/get-repo-name';
 
-// Get repository root directory
-const getRepoRoot = () => {
-	return childProcess
-		.execSync('git rev-parse --show-toplevel', { encoding: 'utf-8' })
-		.trim();
-};
-
-// Get repository name from the root folder
-const getRepoName = () => path.basename(getRepoRoot());
-
-// Get all branches
-const getAllBranches = async () => {
-	const branches = await git.branchLocal(['--format="%(refname:short)"']);
-	return branches.all.map((branch) => branch.replace(/"/g, '')); // Remove quotes
-};
-
-// Get contributors and their commit stats
-const getContributors = async () => {
-	const contributors = new Map();
-
-	const logOutput = childProcess.execSync(
-		'git log --pretty=format:"|||%n%an <%ae> %ad" --date=iso --shortstat',
-		{ encoding: 'utf-8' },
-	);
-
-	let currentContributor;
-
-	const splittedLog = logOutput.split('|||');
-
-	splittedLog.forEach((line) => {
-		// console.log({ line });
-		const authorMatch = line.match(/(.+) <(.+)> (.+)/);
-		if (!authorMatch) {
-			return;
-		}
-
-		const [, name, email, date] = authorMatch;
-		const key = `${name}|${email}`;
-
-		if (!contributors.has(key)) {
-			contributors.set(key, {
-				n: name,
-				e: email,
-				c: [],
-				o: 0,
-				loc: 0,
-				rm: 0,
-			});
-		}
-
-		currentContributor = key;
-		const contributor = contributors.get(key);
-
-		const commit = {
-			d: date,
-		};
-
-		if (currentContributor) {
-			const { deletions, insertions } = extractChanges(line);
-			contributor.loc += insertions;
-			contributor.rm += deletions;
-		}
-
-		contributor.c.push(commit);
-	});
-
-	return contributors;
-};
-
-const extractChanges = (line) => {
-	const locMatch = line.match(/(\d+) insertions?\(\+\)/);
-	const rmMatch = line.match(/(\d+) deletions?\(-\)/);
-
-	const insertions = locMatch ? Number.parseInt(locMatch[1], 10) : 0;
-	const deletions = rmMatch ? Number.parseInt(rmMatch[1], 10) : 0;
-
-	return { insertions, deletions };
-};
-
-// Get total lines owned per author using git blame
-const getLineOwnership = async (contributors) => {
-	const repoRoot = getRepoRoot();
-	const blameOutput = childProcess.execSync(
-		`git -C "${repoRoot}" ls-tree -r -z --name-only HEAD | while IFS= read -r -d '' file; do git -C "${repoRoot}" blame --line-porcelain "$file" | grep '^author '; done | sort | uniq -c | sort -nr`,
-		{ encoding: 'utf-8', shell: '/bin/bash' },
-	);
-
-	blameOutput.split('\n').forEach((line) => {
-		const match = line.trim().match(/(\d+)\s+author (.+)/);
-		if (match) {
-			const [, count, name] = match;
-			for (const key of contributors.keys()) {
-				if (key.startsWith(`${name}|`)) {
-					contributors.get(key).o = Number.parseInt(count);
-				}
-			}
-		}
-	});
-};
+export const git = simpleGit();
 
 // Main function to gather Git stats for all branches
 export const getGitStats = async () => {
@@ -121,10 +26,6 @@ export const getGitStats = async () => {
 	for (const branch of branches) {
 		await git.checkout(branch);
 		const contributors = await getContributors();
-		console.log({ contributors });
-		// contributors.forEach((c) => {
-		// 	c.c.forEach((com) => console.log({ com }));
-		// });
 		await getLineOwnership(contributors);
 
 		branchData.push({
@@ -144,6 +45,13 @@ export const getGitStats = async () => {
 	const compressed = LZString.compressToEncodedURIComponent(
 		JSON.stringify(data),
 	);
+
+	const csv = jsonToCsv(data);
+
+	const csvCompressed = LZString.compressToEncodedURIComponent(csv);
+
+	console.log('JSON COMPRESSED LENGTH: ', JSON.stringify(data).length);
+	console.log('CSV COMPRESSED LENGTH: ', csvCompressed.length);
 
 	const clientUrl =
 		process.env.NODE_ENV === 'development'
