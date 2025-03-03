@@ -3,20 +3,24 @@
 import LZString from 'lz-string';
 import open from 'open';
 import simpleGit from 'simple-git';
-import { jsonToCsv } from '../helpers/json-to-csv';
 
 // Helpers functions
+import args from '../helpers/args';
 import { getAllBranches } from '../helpers/git/get-all-branches';
 import { getContributors } from '../helpers/git/get-contributors';
+import { getCurrentBranch } from '../helpers/git/get-current-branch';
 import { getLineOwnership } from '../helpers/git/get-line-ownership';
 import { getRepoName } from '../helpers/git/get-repo-name';
+import { jsonToCsv } from '../helpers/json-to-csv';
 
 export const git = simpleGit();
 
 // Main function to gather Git stats for all branches
 export const getGitStats = async () => {
 	const repoName = await getRepoName();
-	const branches = await getAllBranches();
+	const branches = args.currentBranchOnly
+		? await getCurrentBranch()
+		: await getAllBranches();
 
 	const currentBranch = (await git.branchLocal(['--format="%(refname:short)"']))
 		.current;

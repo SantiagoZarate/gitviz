@@ -5,7 +5,7 @@ export async function getContributors() {
 	const contributors = new Map();
 
 	const logOutput = execSync(
-		'git log --pretty=format:"|||%n%an <%ae> %ad" --date=iso --shortstat',
+		'git log --pretty=format:"|||%n%an <%ae> %ad" --date=unix --shortstat',
 		{ encoding: 'utf-8' },
 	);
 
@@ -14,7 +14,7 @@ export async function getContributors() {
 	const splittedLog = logOutput.split('|||');
 
 	splittedLog.forEach((line) => {
-		// console.log({ line });
+		console.log({ line });
 		const authorMatch = line.match(/(.+) <(.+)> (.+)/);
 		if (!authorMatch) {
 			return;
