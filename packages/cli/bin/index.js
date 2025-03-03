@@ -120,8 +120,6 @@ export const getGitStats = async () => {
 		b: branchData,
 	};
 
-	console.dir(data);
-
 	const compressed = LZString.compressToEncodedURIComponent(
 		JSON.stringify(data),
 	);
