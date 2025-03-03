@@ -1,7 +1,7 @@
-import type { ContributorMultiNames } from '@/helpers/merge-contributor';
+import type { Contributor } from '@/lib/git-schema';
 
 interface Props {
-	contributor: ContributorMultiNames;
+	contributor: Contributor;
 	onSelect: () => void;
 	active?: boolean;
 }

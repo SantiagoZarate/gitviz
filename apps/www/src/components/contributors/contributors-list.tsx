@@ -1,5 +1,5 @@
 import { useGitContext } from '@/context/global-context';
-import type { ContributorMultiNames } from '@/helpers/merge-contributor';
+import type { Contributor } from '@/lib/git-schema';
 import { AnimatePresence } from 'motion/react';
 import { MotionItem } from '../motion/motion-item';
 import { MotionList } from '../motion/motion-list';
@@ -7,7 +7,7 @@ import { ContributorItem } from './contributor-item';
 import { EmptyContributors } from './empty-contributors';
 
 interface Props {
-	contributors: ContributorMultiNames[];
+	contributors: Contributor[];
 }
 
 export function ContributorsList({ contributors }: Props) {
