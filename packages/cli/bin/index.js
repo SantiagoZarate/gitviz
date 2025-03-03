@@ -41,11 +41,11 @@ const getRepoName = () => path.basename(getRepoRoot());
 const stashChanges = async () => {
 	try {
 		const status = await git.status();
-		if (status.files.length > 0) {
-			log.info('Stashing uncommitted changes...');
+		if (status.files.length > 0 || status.not_added.length > 0) {
+			log.info('Stashing uncommitted and untracked changes...');
 			await git.stash([
 				'push',
-				'-u',
+				'--include-untracked',
 				'-m',
 				'Temporary stash before branch switch',
 			]);

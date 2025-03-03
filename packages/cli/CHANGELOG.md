@@ -1,5 +1,11 @@
 # @gitviz/cli
 
+## 0.0.8
+
+### Patch Changes
+
+- stash and unstash changes when necesary
+
 ## 0.0.7
 
 ### Patch Changes
