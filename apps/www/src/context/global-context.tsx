@@ -73,8 +73,7 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 
 					return { ...prevState, contributors: contributorsWithAvatar };
 				});
-			})
-			.catch((e) => {});
+			});
 	}, [activeBranch.name]);
 
 	if (!json) {

@@ -1,11 +1,16 @@
 import { mergeContributor } from '@/helpers/merge-contributor';
 import { z } from 'zod';
 
+const commitSchema = z.object({
+	// date
+	d: z.string(),
+});
+
 const rawContributorSchema = z.object({
 	// Name
 	n: z.string(),
 	// Commits
-	c: z.coerce.number(),
+	c: z.array(commitSchema),
 	// Email
 	e: z.string().email(),
 	// Lines of code
@@ -37,7 +42,7 @@ export const gitSchema = z
 		branchs: b.map(({ co, n }) => {
 			// Merge contributors with same email and sort by commits
 			const contributors = mergeContributor(co).sort(
-				(a, b) => b.commits - a.commits,
+				(a, b) => b.commits.length - a.commits.length,
 			);
 
 			return {
@@ -53,10 +58,12 @@ export type Branch = GitSchema['branchs'][number];
 
 export type Contributor = {
 	name: string[];
-	commits: number;
+	commits: {
+		date: string;
+	}[];
 	linesOfCode: number;
 	removed: number;
 	owned: number;
 	email: string;
-	avatar: string | null;
+	avatar?: string | null;
 };

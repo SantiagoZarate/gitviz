@@ -24,7 +24,7 @@ export function ActiveContributor() {
 	const { activeContributor, contributors } = useGitContext();
 
 	const totalContributions = contributors.reduce(
-		(prev, curr) => prev + curr.commits,
+		(prev, curr) => prev + curr.commits.length,
 		0,
 	);
 
@@ -36,7 +36,7 @@ export function ActiveContributor() {
 	).toFixed(2);
 
 	const contributionPercentage = (
-		((activeContributor?.commits ?? 0) / totalContributions) *
+		((activeContributor?.commits.length ?? 0) / totalContributions) *
 		100
 	).toFixed(2);
 
@@ -62,7 +62,9 @@ export function ActiveContributor() {
 							<section className='flex flex-col gap-2'>
 								<CardTitle>{activeContributor.name}</CardTitle>
 								<CardDescription className='flex divide-x'>
-									<p className='pr-1'>{activeContributor.commits} commits</p>
+									<p className='pr-1'>
+										{activeContributor.commits.length} commits
+									</p>
 									<p className='pl-1'>{activeContributor.owned} LoC</p>
 								</CardDescription>
 							</section>

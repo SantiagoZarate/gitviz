@@ -59,7 +59,7 @@ const getContributors = async () => {
 			const contributor = contributors.get(key);
 
 			const commit = {
-				date: date,
+				d: date,
 			};
 
 			contributor.c.push(commit);

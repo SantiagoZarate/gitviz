@@ -11,14 +11,17 @@ export function mergeContributor(
 			const existing = aux.get(c.e)!;
 			// if (!existing.name.includes(c.name))
 			existing.name.push(c.n);
-			existing.commits += c.c;
+			existing.commits = [
+				...existing.commits,
+				...c.c.map((commit) => ({ date: commit.d })),
+			];
 			existing.linesOfCode += c.loc;
 			existing.removed += c.rm;
 			existing.owned += c.o;
 		} else {
 			// Agregarlo
 			aux.set(c.e, {
-				commits: c.c,
+				commits: c.c.map((commit) => ({ date: commit.d })),
 				email: c.e,
 				linesOfCode: c.loc,
 				owned: c.o,
