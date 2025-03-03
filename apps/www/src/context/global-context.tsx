@@ -18,6 +18,7 @@ interface State {
 
 interface Actions {
 	updateActiveContributor: (name: string) => void;
+	updateActiveBranch: (name: string) => void;
 }
 
 type GitContextProps = State & Actions;
@@ -59,6 +60,13 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 		});
 	};
 
+	const handleUpadteActiveBranch = (name: string) => {
+		setActiveBranch(() => {
+			setActiveContributor(null);
+			return json.branchs.find((branch) => branch.name === name)!;
+		});
+	};
+
 	return (
 		<gitContext.Provider
 			value={{
@@ -70,6 +78,7 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 				activeBranch,
 				// Actions
 				updateActiveContributor: handleUpdateActiveContributor,
+				updateActiveBranch: handleUpadteActiveBranch,
 			}}
 		>
 			{children}
