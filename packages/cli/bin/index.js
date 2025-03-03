@@ -53,6 +53,8 @@ const getContributors = async () => {
 				e: email,
 				c: [],
 				o: 0,
+				loc: 0,
+				rm: 0,
 			});
 		}
 
@@ -61,14 +63,12 @@ const getContributors = async () => {
 
 		const commit = {
 			d: date,
-			loc: 0,
-			rm: 0,
 		};
 
 		if (currentContributor) {
 			const { deletions, insertions } = extractChanges(line);
-			commit.loc = insertions;
-			commit.rm = deletions;
+			contributor.loc += insertions;
+			contributor.rm += deletions;
 		}
 
 		contributor.c.push(commit);
@@ -121,6 +121,7 @@ export const getGitStats = async () => {
 	for (const branch of branches) {
 		await git.checkout(branch);
 		const contributors = await getContributors();
+		console.log({ contributors });
 		// contributors.forEach((c) => {
 		// 	c.c.forEach((com) => console.log({ com }));
 		// });
