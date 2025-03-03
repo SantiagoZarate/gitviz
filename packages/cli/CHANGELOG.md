@@ -1,5 +1,11 @@
 # @gitviz/cli
 
+## 0.0.7
+
+### Patch Changes
+
+- add flag to fetch remote branches
+
 ## 0.0.6
 
 ### Patch Changes
