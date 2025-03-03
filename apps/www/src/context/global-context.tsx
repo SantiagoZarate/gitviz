@@ -1,3 +1,5 @@
+import { githubAPI } from '@/api/github/api';
+import { cleanEmail } from '@/helpers/clean-email';
 import { type Branch, type Contributor, gitSchema } from '@/lib/git-schema';
 import LZString from 'lz-string';
 import { parseAsString, useQueryState } from 'nuqs';
@@ -5,6 +7,7 @@ import {
 	type PropsWithChildren,
 	createContext,
 	useContext,
+	useEffect,
 	useState,
 } from 'react';
 
@@ -45,6 +48,24 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 
 	const [activeContributor, setActiveContributor] =
 		useState<Contributor | null>(null);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		githubAPI
+			.getUsersInfo({ contributors: activeBranch.contributors })
+			.then(({ data }) => {
+				setActiveBranch((prevState) => {
+					const contributorsWithAvatar = prevState.contributors.map(
+						(contributor) => ({
+							...contributor,
+							avatar: data[cleanEmail(contributor.email)].nodes[0].avatarUrl,
+						}),
+					);
+
+					return { ...prevState, contributors: contributorsWithAvatar };
+				});
+			});
+	}, [activeBranch.name]);
 
 	if (!json) {
 		return;

@@ -50,12 +50,23 @@ export function ActiveContributor() {
 					initial='hidden'
 				>
 					<Card>
-						<CardHeader>
-							<CardTitle>{activeContributor.name}</CardTitle>
-							<CardDescription className='flex divide-x'>
-								<p className='pr-1'>{activeContributor.commits} commits</p>
-								<p className='pl-1'>{activeContributor.owned} LoC</p>
-							</CardDescription>
+						<CardHeader className='flex-row items-center gap-2'>
+							{activeContributor.avatar ? (
+								<img
+									className='size-10 rounded-md'
+									src={activeContributor.avatar}
+									alt='avatar profile'
+								/>
+							) : (
+								<div>lol</div>
+							)}
+							<section className='flex flex-col gap-2'>
+								<CardTitle>{activeContributor.name}</CardTitle>
+								<CardDescription className='flex divide-x'>
+									<p className='pr-1'>{activeContributor.commits} commits</p>
+									<p className='pl-1'>{activeContributor.owned} LoC</p>
+								</CardDescription>
+							</section>
 						</CardHeader>
 						<CardContent className='flex flex-col gap-4'>
 							<section className='flex flex-col gap-2'>

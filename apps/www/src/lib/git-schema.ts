@@ -58,4 +58,5 @@ export type Contributor = {
 	removed: number;
 	owned: number;
 	email: string;
+	avatar: string | null;
 };
