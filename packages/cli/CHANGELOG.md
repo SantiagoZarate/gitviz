@@ -1,5 +1,11 @@
 # @gitviz/cli
 
+## 0.0.11
+
+### Patch Changes
+
+- extract lines of code and lines removed for each commit
+
 ## 0.0.10
 
 ### Patch Changes
