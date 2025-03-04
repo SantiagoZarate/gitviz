@@ -20,7 +20,5 @@ export function generateChartConfig({ data }: Props): ChartConfig {
 		};
 	});
 
-	console.log(aux);
-
 	return aux;
 }

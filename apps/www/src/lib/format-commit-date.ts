@@ -1,7 +1,13 @@
-import { format, formatDistanceToNow, parse } from 'date-fns';
+import { format, formatDistanceToNow, fromUnixTime, parse } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 
-export function formatCommitDate(rawDate: string) {
+export function formatCommitDate(unixTime: number) {
+	const rawDate = fromUnixTime(unixTime)
+		.toISOString()
+		.replace('T', ' ')
+		.replace('.', ' ')
+		.replace('000Z', '-0300');
+
 	// Parse the date string
 	const parsedDate = parse(rawDate, 'yyyy-MM-dd HH:mm:ss X', new Date());
 

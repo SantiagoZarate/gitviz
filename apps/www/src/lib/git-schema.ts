@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 const commitSchema = z.object({
 	// date
-	d: z.string(),
+	d: z.coerce.number(),
 });
 
 const rawContributorSchema = z.object({
@@ -59,7 +59,7 @@ export type Branch = GitSchema['branchs'][number];
 export type Contributor = {
 	name: string[];
 	commits: {
-		date: string;
+		date: number;
 	}[];
 	linesOfCode: number;
 	removed: number;
