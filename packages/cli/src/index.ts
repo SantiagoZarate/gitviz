@@ -11,7 +11,6 @@ import { getContributors } from './helpers/git/get-contributors';
 import { getCurrentBranch } from './helpers/git/get-current-branch';
 import { getLineOwnership } from './helpers/git/get-line-ownership';
 import { getRepoName } from './helpers/git/get-repo-name';
-import { jsonToCsv } from './helpers/json-to-csv';
 import type { Branch } from './types/branch.type';
 
 export const git = simpleGit();
@@ -51,13 +50,6 @@ export const getGitStats = async () => {
 	const compressed = LZString.compressToEncodedURIComponent(
 		JSON.stringify(data),
 	);
-
-	const csv = jsonToCsv(data);
-
-	const csvCompressed = LZString.compressToEncodedURIComponent(csv);
-
-	console.log('JSON COMPRESSED LENGTH: ', JSON.stringify(data).length);
-	console.log('CSV COMPRESSED LENGTH: ', csvCompressed.length);
 
 	const clientUrl =
 		process.env.NODE_ENV === 'development'

@@ -15,7 +15,6 @@ export async function getContributors(): Promise<Map<string, Contributor>> {
 	const splittedLog = logOutput.split('|||');
 
 	splittedLog.forEach((line) => {
-		console.log({ line });
 		const authorMatch = line.match(/(.+) <(.+)> (.+)/);
 		if (!authorMatch) {
 			return;

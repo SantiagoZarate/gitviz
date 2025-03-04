@@ -12,7 +12,8 @@
 			"tsconfig.json",
 			"tsconfig.node.json",
 			"routeTree.gen.ts",
-			"dist/"
+			"dist/",
+			"bin/"
 		]
 	},
 	"formatter": {
