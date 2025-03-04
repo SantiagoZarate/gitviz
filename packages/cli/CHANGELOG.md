@@ -1,5 +1,11 @@
 # @gitviz/cli
 
+## 0.0.13
+
+### Patch Changes
+
+- add flag to scan only current branch and send commit dates as unix
+
 ## 0.0.12
 
 ### Patch Changes
