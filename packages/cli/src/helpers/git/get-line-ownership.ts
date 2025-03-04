@@ -1,8 +1,9 @@
 import { execSync } from 'node:child_process';
+import type { Contributor } from '../../types/contributor.type';
 import { getRepoRoot } from './get-repo-root';
 
 // Get total lines owned per author using git blame
-export async function getLineOwnership(contributors) {
+export async function getLineOwnership(contributors: Map<string, Contributor>) {
 	const repoRoot = getRepoRoot();
 	const blameOutput = execSync(
 		`git -C "${repoRoot}" ls-tree -r -z --name-only HEAD | while IFS= read -r -d '' file; do git -C "${repoRoot}" blame --line-porcelain "$file" | grep '^author '; done | sort | uniq -c | sort -nr`,
@@ -15,7 +16,7 @@ export async function getLineOwnership(contributors) {
 			const [, count, name] = match;
 			for (const key of contributors.keys()) {
 				if (key.startsWith(`${name}|`)) {
-					contributors.get(key).o = Number.parseInt(count);
+					contributors.get(key)!.o = Number.parseInt(count);
 				}
 			}
 		}

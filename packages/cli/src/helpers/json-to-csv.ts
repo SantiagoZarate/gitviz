@@ -7,7 +7,7 @@ export function jsonToCsv(json) {
 		let branchCsv = `${n},`;
 
 		co.forEach(({ n, e, c, o, loc, rm }) => {
-			let commitDates;
+			let commitDates = '';
 			c.forEach(({ d }) => {
 				commitDates += `|${d},`;
 			});

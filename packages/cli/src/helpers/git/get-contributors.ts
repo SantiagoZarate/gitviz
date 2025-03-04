@@ -1,7 +1,8 @@
 import { execSync } from 'node:child_process';
+import type { Contributor } from '../../types/contributor.type';
 
 // Get contributors and their commit stats
-export async function getContributors() {
+export async function getContributors(): Promise<Map<string, Contributor>> {
 	const contributors = new Map();
 
 	const logOutput = execSync(
@@ -9,7 +10,7 @@ export async function getContributors() {
 		{ encoding: 'utf-8' },
 	);
 
-	let currentContributor;
+	let currentContributor = '';
 
 	const splittedLog = logOutput.split('|||');
 
@@ -53,7 +54,7 @@ export async function getContributors() {
 	return contributors;
 }
 
-const extractChanges = (line) => {
+const extractChanges = (line: string) => {
 	const locMatch = line.match(/(\d+) insertions?\(\+\)/);
 	const rmMatch = line.match(/(\d+) deletions?\(-\)/);
 
