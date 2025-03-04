@@ -3,44 +3,73 @@ import { gitSchema, type RawContributor } from '@/lib/git-schema';
 export function parseCSV(csv: string) {
 	const parts = csv.split(',');
 	const repo = parts[0]; // Repository name
-	const branch = parts[1]; // Branch name
-	const contributorsRaw = csv.split('|').slice(1); // Extract contributors
+	const splittedData = csv.split('|').slice(1);
 
+	const branches: { n: string; co: RawContributor[] }[] = [];
+	let currentBranch: { n: string; co: RawContributor[] } | null = null;
 	let currentContributor: RawContributor | null = null;
 
-	const contributors: RawContributor[] = [];
+	splittedData.forEach((data) => {
+		const items = data.split(',').filter(Boolean); // Remove empty values
 
-	contributorsRaw.forEach((contrib) => {
-		const data = contrib.split(',');
-		console.log({ data });
+		// SI TIENE UN ELEMENTO HAY DOS OPCIONES.
+		// -- El primer elemento empieza con "b-" indicando que es una nueva rama
+		// -- El primer elemento es una fecha en unix
 
-		// En ambos casos, la utlima posicion del array esta vacio.
+		// SI TIENE CINCO ELEMENTOS ES UN NUEVO CONTRIBUIDOR
 
-		// Si el arrey tiene 6 elementos, estamos al inicio de un nuevo contribuidor
-		if (data.length === 6) {
+		if (items.length === 1) {
+			// Comienzo de una nueva rama
+			if (items[0].startsWith('b-')) {
+				// Push last contributor before switching branches
+				if (currentContributor) {
+					currentBranch?.co.push(currentContributor);
+					currentContributor = null;
+				}
+
+				// Push previous branch if exists
+				if (currentBranch) {
+					branches.push(currentBranch);
+				}
+
+				// Create new branch
+				currentBranch = { n: items[0].replace('b-', ''), co: [] };
+			} else {
+				// Fecha de un commit
+				if (currentContributor) {
+					currentContributor.c.push({ d: Number(items[0]) });
+				}
+			}
+		} else if (items.length === 5) {
+			console.log('NUEVO CONTRIBUIDOR');
+			console.log({ items });
+
+			// Push previous contributor before switching
 			if (currentContributor) {
-				contributors.push(currentContributor);
+				currentBranch?.co.push(currentContributor);
 			}
 
 			currentContributor = {
-				n: data[0],
-				e: data[1],
-				loc: Number(data[2]),
-				rm: Number(data[3]),
-				o: Number(data[4]),
+				n: items[0],
+				e: items[1],
+				loc: Number(items[2]),
+				rm: Number(items[3]),
+				o: Number(items[4]),
 				c: [],
 			};
-		} else if (data.length) {
-			const [date] = data;
-			currentContributor!.c.push({ d: Number(date) });
 		}
 	});
 
+	// Push last contributor and last branch before returning
 	if (currentContributor) {
-		contributors.push(currentContributor);
+		// @ts-ignore
+		currentBranch?.co.push(currentContributor);
+	}
+	if (currentBranch) {
+		branches.push(currentBranch);
 	}
 
-	const parsedData = { t: repo, b: [{ n: branch, co: contributors }] };
+	const parsedData = { t: repo, b: branches };
 
 	// Validate with Zod
 	const result = gitSchema.safeParse(parsedData);

@@ -1,6 +1,7 @@
 import { githubAPI } from '@/api/github/api';
 import { cleanEmail } from '@/helpers/clean-email';
-import { type Branch, type Contributor, gitSchema } from '@/lib/git-schema';
+import { parseCSV } from '@/helpers/parse-csv';
+import type { Branch, Contributor } from '@/lib/git-schema';
 import LZString from 'lz-string';
 import { parseAsString, useQueryState } from 'nuqs';
 import {
@@ -35,7 +36,7 @@ export function GitContextProvider({ children }: PropsWithChildren) {
 		compressedData!,
 	);
 
-	const parsedData = gitSchema.parse(JSON.parse(decompressed));
+	const parsedData = parseCSV(decompressed);
 	const [json] = useState({
 		...parsedData,
 		branchs: parsedData.branchs.map((branch) => ({

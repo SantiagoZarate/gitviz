@@ -1,3 +1,3 @@
 export interface Commit {
-	date: string;
+	d: string;
 }

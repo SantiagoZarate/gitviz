@@ -1,10 +1,17 @@
-export function jsonToCsv(json) {
+import type { Branch } from '../types/branch.type';
+
+interface RawJson {
+	t: string;
+	b: Branch[];
+}
+
+export function jsonToCsv(json: RawJson) {
 	const { t, b } = json;
 
 	let csv = `${t},`;
 
 	b.forEach(({ n, co }) => {
-		let branchCsv = `${n},`;
+		let branchCsv = `b-${n},`;
 
 		co.forEach(({ n, e, c, o, loc, rm }) => {
 			let commitDates = '';
@@ -14,7 +21,7 @@ export function jsonToCsv(json) {
 			branchCsv += `|${n},${e},${o},${loc},${rm},${commitDates}`;
 		});
 
-		csv += `${branchCsv}`;
+		csv += `|${branchCsv}`;
 	});
 
 	return csv;

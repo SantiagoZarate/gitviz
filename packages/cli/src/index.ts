@@ -59,11 +59,6 @@ export const getGitStats = async () => {
 
 	const compressedCsv = LZString.compressToEncodedURIComponent(csv);
 
-	console.log({ csv });
-
-	console.log('CSV COMPRESSED: ', compressedCsv.length);
-	console.log('JSON COMPRESSED: ', compressed.length);
-
 	log.success('Git analysis completed successfully.');
 
 	log.info('Opening visualization in browser...');
@@ -73,7 +68,8 @@ export const getGitStats = async () => {
 			? 'http://localhost:5173'
 			: 'https://git-viz.netlify.app';
 
-	const url = `${clientUrl}/stats/?q=${compressed}`;
+	const url = `${clientUrl}/stats/?q=${compressedCsv}`;
+
 	await open(url);
 
 	log.success('Done!');

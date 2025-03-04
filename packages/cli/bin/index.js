@@ -130,6 +130,24 @@ async function getLineOwnership(contributors) {
 import { basename } from "node:path";
 var getRepoName = () => basename(getRepoRoot());
 
+// src/helpers/json-to-csv.ts
+function jsonToCsv(json) {
+  const { t, b } = json;
+  let csv = `${t},`;
+  b.forEach(({ n, co }) => {
+    let branchCsv = `b-${n},`;
+    co.forEach(({ n: n2, e, c, o, loc, rm }) => {
+      let commitDates = "";
+      c.forEach(({ d }) => {
+        commitDates += `|${d},`;
+      });
+      branchCsv += `|${n2},${e},${o},${loc},${rm},${commitDates}`;
+    });
+    csv += `|${branchCsv}`;
+  });
+  return csv;
+}
+
 // src/index.ts
 var git = simpleGit();
 var getGitStats = async () => {
@@ -155,10 +173,12 @@ var getGitStats = async () => {
   const compressed = LZString.compressToEncodedURIComponent(
     JSON.stringify(data)
   );
+  const csv = jsonToCsv(data);
+  const compressedCsv = LZString.compressToEncodedURIComponent(csv);
   log.success("Git analysis completed successfully.");
   log.info("Opening visualization in browser...");
   const clientUrl = process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://git-viz.netlify.app";
-  const url = `${clientUrl}/stats/?q=${compressed}`;
+  const url = `${clientUrl}/stats/?q=${compressedCsv}`;
   await open(url);
   log.success("Done!");
   return data;
