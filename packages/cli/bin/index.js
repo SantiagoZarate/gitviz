@@ -78,10 +78,32 @@ import { execSync as execSync3 } from "node:child_process";
 
 // src/helpers/git/get-repo-root.ts
 import { execSync as execSync2 } from "node:child_process";
+
+// src/helpers/logger.ts
+var colors = {
+  reset: "\x1B[0m",
+  green: "\x1B[32m",
+  yellow: "\x1B[33m",
+  blue: "\x1B[34m",
+  red: "\x1B[31m"
+};
+var log = {
+  info: (msg) => console.log(`${colors.blue}\u2139${colors.reset} ${msg}`),
+  success: (msg) => console.log(`${colors.green}\u2713${colors.reset} ${msg}`),
+  warn: (msg) => console.log(`${colors.yellow}\u26A0${colors.reset} ${msg}`),
+  error: (msg) => console.error(`${colors.red}\u2715${colors.reset} ${msg}`)
+};
+
+// src/helpers/git/get-repo-root.ts
 var getRepoRoot = () => {
-  return execSync2("git rev-parse --show-toplevel", {
-    encoding: "utf-8"
-  }).trim();
+  try {
+    return execSync2("git rev-parse --show-toplevel", {
+      encoding: "utf-8"
+    }).trim();
+  } catch (err) {
+    log.error("Not a Git repository. Please run this inside a Git project.");
+    process.exit(1);
+  }
 };
 
 // src/helpers/git/get-line-ownership.ts
@@ -111,6 +133,7 @@ var getRepoName = () => basename(getRepoRoot());
 // src/index.ts
 var git = simpleGit();
 var getGitStats = async () => {
+  log.info("Starting Git analysis...");
   const repoName = await getRepoName();
   const branches = args_default.currentBranchOnly ? await getCurrentBranch() : await getAllBranches();
   const currentBranch = (await git.branchLocal(['--format="%(refname:short)"'])).current;
@@ -132,9 +155,12 @@ var getGitStats = async () => {
   const compressed = LZString.compressToEncodedURIComponent(
     JSON.stringify(data)
   );
+  log.success("Git analysis completed successfully.");
+  log.info("Opening visualization in browser...");
   const clientUrl = process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://git-viz.netlify.app";
   const url = `${clientUrl}/stats/?q=${compressed}`;
   await open(url);
+  log.success("Done!");
   return data;
 };
 getGitStats();
