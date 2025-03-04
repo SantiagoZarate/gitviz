@@ -16,7 +16,7 @@ const rawContributorSchema = z.object({
 	// Removed
 	rm: z.coerce.number(),
 	// Email
-	e: z.string().email(),
+	e: z.string(),
 	// Owned
 	o: z.coerce.number(),
 });
