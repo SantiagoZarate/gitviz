@@ -10,8 +10,10 @@ export function parseCSV(csv: string) {
 	let currentBranch: { n: string; co: RawContributor[] } | null = null;
 	let currentContributor: RawContributor | null = null;
 
-	// Boolean flags
+	// Numeric flags
+	// (0 = init, 23 = finish)
 	let commitsPerHourIndex = 0;
+	// (0 = init, 11 = finish)
 	let commitsPerMonthIndex = 0;
 
 	let commitsPerHour: Record<string, number> | null = null;
@@ -19,6 +21,12 @@ export function parseCSV(csv: string) {
 
 	splittedData.forEach((data) => {
 		const items = data.split(',').filter(Boolean); // Remove empty values
+
+		// Si tenemos un solo elemento en items, se trata de:
+		// A - Una nueva rama del repositorio
+		// B - El valor de cuantos commits hizo en cierta hora o mes
+
+		// Si tenemos 5 elemtos en items, se trata de un nuevo contribuidor
 
 		if (items.length === 1) {
 			// Comienzo de una nueva rama
@@ -36,29 +44,33 @@ export function parseCSV(csv: string) {
 
 				// Create new branch
 				currentBranch = { n: items[0].replace('b-', ''), co: [] };
-			} else {
-				if (commitsPerHourIndex < 24) {
-					// Crear el objeto que contiene la informacion
-					if (!commitsPerHour) {
-						commitsPerHour = Object.fromEntries(
-							Array.from({ length: 24 }, (_, i) => [i.toString(), 0]),
-						);
-					}
 
-					commitsPerHour[commitsPerHourIndex] = Number(items[0]);
-					commitsPerHourIndex++;
+				commitsPerHour = null;
+				commitsPerMonth = null;
+				commitsPerHourIndex = 0;
+				commitsPerMonthIndex = 0;
+			} else if (commitsPerHourIndex < 24) {
+				// Fix: should go up to 24, not 23
+				// Create the object only once
+				if (!commitsPerHour) {
+					commitsPerHour = Object.fromEntries(
+						Array.from({ length: 24 }, (_, i) => [i.toString(), 0]),
+					);
 				}
-				// Si ya asignaro todos los commits por hora, seguir con los meses
-				if (commitsPerHourIndex === 24) {
-					if (!commitsPerMonth) {
-						commitsPerMonth = Object.fromEntries(
-							Array.from({ length: 12 }, (_, i) => [i.toString(), 0]),
-						);
-					}
 
-					commitsPerMonth[commitsPerMonthIndex] = Number(items[0]);
-					commitsPerMonthIndex++;
+				commitsPerHour[commitsPerHourIndex] = Number(items[0]);
+				commitsPerHourIndex++;
+			} else if (commitsPerMonthIndex < 12) {
+				// Fix: should go up to 12, not unbounded
+				// Create the object only once
+				if (!commitsPerMonth) {
+					commitsPerMonth = Object.fromEntries(
+						Array.from({ length: 12 }, (_, i) => [i.toString(), 0]),
+					);
 				}
+
+				commitsPerMonth[commitsPerMonthIndex] = Number(items[0]);
+				commitsPerMonthIndex++;
 			}
 		} else if (items.length === 5) {
 			// Push previous contributor before switching
