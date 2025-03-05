@@ -1,4 +1,5 @@
 import { gitSchema, type RawContributor } from '@/lib/git-schema';
+import { countCommitsAmount } from './count-commits-amount';
 
 export function parseCSV(csv: string) {
 	const parts = csv.split(',');
@@ -9,14 +10,15 @@ export function parseCSV(csv: string) {
 	let currentBranch: { n: string; co: RawContributor[] } | null = null;
 	let currentContributor: RawContributor | null = null;
 
+	// Boolean flags
+	let commitsPerHourIndex = 0;
+	let commitsPerMonthIndex = 0;
+
+	let commitsPerHour: Record<string, number> | null = null;
+	let commitsPerMonth: Record<string, number> | null = null;
+
 	splittedData.forEach((data) => {
 		const items = data.split(',').filter(Boolean); // Remove empty values
-
-		// SI TIENE UN ELEMENTO HAY DOS OPCIONES.
-		// -- El primer elemento empieza con "b-" indicando que es una nueva rama
-		// -- El primer elemento es una fecha en unix
-
-		// SI TIENE CINCO ELEMENTOS ES UN NUEVO CONTRIBUIDOR
 
 		if (items.length === 1) {
 			// Comienzo de una nueva rama
@@ -35,15 +37,40 @@ export function parseCSV(csv: string) {
 				// Create new branch
 				currentBranch = { n: items[0].replace('b-', ''), co: [] };
 			} else {
-				// Fecha de un commit
-				if (currentContributor) {
-					currentContributor.c.push({ d: Number(items[0]) });
+				if (commitsPerHourIndex < 24) {
+					// Crear el objeto que contiene la informacion
+					if (!commitsPerHour) {
+						commitsPerHour = Object.fromEntries(
+							Array.from({ length: 24 }, (_, i) => [i.toString(), 0]),
+						);
+					}
+
+					commitsPerHour[commitsPerHourIndex] = Number(items[0]);
+					commitsPerHourIndex++;
+				}
+				// Si ya asignaro todos los commits por hora, seguir con los meses
+				if (commitsPerHourIndex === 24) {
+					if (!commitsPerMonth) {
+						commitsPerMonth = Object.fromEntries(
+							Array.from({ length: 12 }, (_, i) => [i.toString(), 0]),
+						);
+					}
+
+					commitsPerMonth[commitsPerMonthIndex] = Number(items[0]);
+					commitsPerMonthIndex++;
 				}
 			}
 		} else if (items.length === 5) {
 			// Push previous contributor before switching
 			if (currentContributor) {
+				currentContributor.c.cph = commitsPerHour!;
+				currentContributor.c.cpm = commitsPerMonth!;
+				currentContributor.c.a = countCommitsAmount(commitsPerMonth!);
 				currentBranch?.co.push(currentContributor);
+
+				// Reset indexes
+				commitsPerHourIndex = 0;
+				commitsPerMonthIndex = 0;
 			}
 
 			currentContributor = {
@@ -52,13 +79,19 @@ export function parseCSV(csv: string) {
 				loc: Number(items[2]),
 				rm: Number(items[3]),
 				o: Number(items[4]),
-				c: [],
+				c: { cph: {}, cpm: {}, a: 0 },
 			};
 		}
 	});
 
 	// Push last contributor and last branch before returning
 	if (currentContributor) {
+		// @ts-ignore
+		currentContributor.c.cph = commitsPerHour!;
+		// @ts-ignore
+		currentContributor.c.cpm = commitsPerMonth!;
+		// @ts-ignore
+		currentContributor.c.a = countCommitsAmount(commitsPerMonth!);
 		// @ts-ignore
 		currentBranch?.co.push(currentContributor);
 	}
@@ -74,6 +107,8 @@ export function parseCSV(csv: string) {
 		console.log(result.error);
 		throw new Error('Invalid data');
 	}
+
+	console.log(result.data);
 
 	return result.data;
 }

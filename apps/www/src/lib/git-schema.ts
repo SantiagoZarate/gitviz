@@ -2,15 +2,19 @@ import { mergeContributor } from '@/helpers/merge-contributor';
 import { z } from 'zod';
 
 const commitSchema = z.object({
-	// date
-	d: z.coerce.number(),
+	// commits per hour
+	cph: z.record(z.coerce.number()),
+	// commits per month
+	cpm: z.record(z.coerce.number()), // Another dynamic object for months
+	// amount
+	a: z.coerce.number(),
 });
 
 const rawContributorSchema = z.object({
 	// Name
 	n: z.string(),
 	// Commits
-	c: z.array(commitSchema),
+	c: commitSchema,
 	// Lines of code
 	loc: z.coerce.number(),
 	// Removed
@@ -42,7 +46,7 @@ export const gitSchema = z
 		branchs: b.map(({ co, n }) => {
 			// Merge contributors with same email and sort by commits
 			const contributors = mergeContributor(co).sort(
-				(a, b) => b.commits.length - a.commits.length,
+				(a, b) => b.commits.amount - a.commits.amount,
 			);
 
 			return {
@@ -59,8 +63,14 @@ export type Branch = GitSchema['branchs'][number];
 export type Contributor = {
 	name: string[];
 	commits: {
-		date: number;
-	}[];
+		commitsPerHour: {
+			[key: string]: number;
+		};
+		commitsPerMonth: {
+			[key: string]: number;
+		};
+		amount: number;
+	};
 	linesOfCode: number;
 	removed: number;
 	owned: number;

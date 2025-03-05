@@ -1,4 +1,5 @@
 import type { Contributor, RawContributor } from '@/lib/git-schema';
+import { sumCommits } from './sum-commits';
 
 export function mergeContributor(
 	contributors: RawContributor[],
@@ -11,19 +12,24 @@ export function mergeContributor(
 			const existing = aux.get(c.e)!;
 			// if (!existing.name.includes(c.name))
 			existing.name.push(c.n);
-			existing.commits = [
-				...existing.commits,
-				...c.c.map((commit) => ({
-					date: commit.d,
-				})),
-			];
+			existing.commits.commitsPerHour = sumCommits({
+				commitsA: existing.commits.commitsPerHour,
+				commitsB: c.c.cph,
+			});
+			existing.commits.commitsPerMonth = sumCommits({
+				commitsA: existing.commits.commitsPerMonth,
+				commitsB: c.c.cpm,
+			});
+			existing.commits.amount += c.c.a;
 			existing.owned += c.o;
 		} else {
 			// Agregarlo
 			aux.set(c.e, {
-				commits: c.c.map((commit) => ({
-					date: commit.d,
-				})),
+				commits: {
+					commitsPerHour: c.c.cph,
+					commitsPerMonth: c.c.cpm,
+					amount: c.c.a,
+				},
 				linesOfCode: c.loc,
 				removed: c.rm,
 				email: c.e,
