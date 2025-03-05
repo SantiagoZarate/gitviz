@@ -58,7 +58,7 @@ async function getContributors() {
       contributors.set(key, {
         n: name,
         e: email,
-        c: { cph: commitsPerHour, cpm: commitsPerMonth },
+        c: { cph: commitsPerHour, cpm: commitsPerMonth, f: date, l: "" },
         o: 0,
         loc: 0,
         rm: 0
@@ -67,6 +67,7 @@ async function getContributors() {
     currentContributor = key;
     const contributor = contributors.get(key);
     updateContributorCommits(contributor, date);
+    contributor.c.l = date;
     if (currentContributor) {
       const { deletions, insertions } = extractChanges(line);
       contributor.loc += insertions;
@@ -126,7 +127,7 @@ var getRepoRoot = () => {
 async function getLineOwnership(contributors) {
   const repoRoot = getRepoRoot();
   const blameOutput = execSync3(
-    `git -C "${repoRoot}" ls-tree -r -z --name-only HEAD | while IFS= read -r -d '' file; do git -C "${repoRoot}" blame --line-porcelain "$file" | grep '^author '; done | sort | uniq -c | sort -nr`,
+    `git -C "${repoRoot}" ls-tree -r -z --name-only HEAD | while IFS= read -r -d '' file; do git -C "${repoRoot}" blame --line-porcelain "$file" | grep  -a '^author '; done | sort | uniq -c | sort -nr`,
     { encoding: "utf-8", shell: "/bin/bash" }
   );
   blameOutput.split("\n").forEach((line) => {
@@ -160,6 +161,7 @@ function jsonToCsv(json) {
       Object.entries(c.cpm).map(([month, value]) => {
         commitDates += `|${value},`;
       });
+      commitDates += `|${c.f}~${c.l}`;
       branchCsv += `|${n2},${e},${o},${loc},${rm},${commitDates}`;
     });
     csv += `|${branchCsv}`;
@@ -198,9 +200,6 @@ var getGitStats = async () => {
   log.info("Opening visualization in browser...");
   const clientUrl = process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://git-viz.netlify.app";
   const url = `${clientUrl}/stats/?q=${compressedCsv}`;
-  console.log({ csv });
-  console.log("JSON COMPRESSED: ", compressed.length);
-  console.log("CSV COMPRESSED: ", compressedCsv.length);
   await open(url);
   log.success("Done!");
   return data;

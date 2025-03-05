@@ -36,7 +36,7 @@ export async function getContributors(): Promise<Map<string, Contributor>> {
 			contributors.set(key, {
 				n: name,
 				e: email,
-				c: { cph: commitsPerHour, cpm: commitsPerMonth },
+				c: { cph: commitsPerHour, cpm: commitsPerMonth, f: date, l: '' },
 				o: 0,
 				loc: 0,
 				rm: 0,
@@ -47,6 +47,9 @@ export async function getContributors(): Promise<Map<string, Contributor>> {
 		const contributor = contributors.get(key)!;
 
 		updateContributorCommits(contributor, date);
+
+		// Update last commit always
+		contributor.c.l = date;
 
 		if (currentContributor) {
 			const { deletions, insertions } = extractChanges(line);

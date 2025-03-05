@@ -7,4 +7,6 @@ export interface Commit {
 	cpm: {
 		[key: string]: number;
 	};
+	l: string;
+	f: string;
 }

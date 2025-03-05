@@ -21,6 +21,7 @@ export function jsonToCsv(json: RawJson) {
 			Object.entries(c.cpm).map(([month, value]) => {
 				commitDates += `|${value},`;
 			});
+			commitDates += `|${c.f}~${c.l}`;
 			branchCsv += `|${n},${e},${o},${loc},${rm},${commitDates}`;
 		});
 
