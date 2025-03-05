@@ -2,7 +2,7 @@
 	"name": "@santiagozarate/gitviz",
 	"module": "index.ts",
 	"type": "module",
-	"version": "0.0.16",
+	"version": "0.0.17",
 	"bin": {
 		"git-stats": "bin/index.js"
 	},
