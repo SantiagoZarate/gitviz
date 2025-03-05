@@ -1,5 +1,6 @@
 import { useGitContext } from '@/context/global-context';
 import { mapCommitMonths } from '@/helpers/map-commits-months';
+import { formatCommitDate } from '@/lib/format-commit-date';
 import { AnimatePresence, type Variants, motion } from 'motion/react';
 import { BarChart } from '../charts/bar-chart';
 import { generateChartConfig } from '../charts/generate-chart-config';
@@ -120,26 +121,20 @@ export function ActiveContributor() {
 									</p>
 									<ProgressBar width={contributionLoCPercentage} />
 								</section>
-								{/* <section className='flex flex-col gap-2'>
+								<section className='flex flex-col gap-2'>
 									<section>
 										<p className='text-primary/50 text-sm'>
 											Latest contribution
 										</p>
-										<p>{formatCommitDate(activeContributor.commits[0].date)}</p>
+										<p>{formatCommitDate(activeContributor.commits.last)}</p>
 									</section>
 									<section>
 										<p className='text-primary/50 text-sm'>
 											First contribution
 										</p>
-										<p>
-											{formatCommitDate(
-												activeContributor.commits[
-													activeContributor.commits.length - 1
-												].date,
-											)}
-										</p>
+										<p>{formatCommitDate(activeContributor.commits.first)}</p>
 									</section>
-								</section> */}
+								</section>
 							</CardContent>
 						</Card>
 					</motion.div>

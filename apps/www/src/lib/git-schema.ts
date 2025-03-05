@@ -8,6 +8,10 @@ const commitSchema = z.object({
 	cpm: z.record(z.coerce.number()), // Another dynamic object for months
 	// amount
 	a: z.coerce.number(),
+	// First
+	f: z.string(),
+	// Last
+	l: z.string(),
 });
 
 const rawContributorSchema = z.object({
@@ -70,6 +74,8 @@ export type Contributor = {
 			[key: string]: number;
 		};
 		amount: number;
+		last: string;
+		first: string;
 	};
 	linesOfCode: number;
 	removed: number;

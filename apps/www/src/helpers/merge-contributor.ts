@@ -29,6 +29,8 @@ export function mergeContributor(
 					commitsPerHour: c.c.cph,
 					commitsPerMonth: c.c.cpm,
 					amount: c.c.a,
+					first: c.c.f,
+					last: c.c.l,
 				},
 				linesOfCode: c.loc,
 				removed: c.rm,

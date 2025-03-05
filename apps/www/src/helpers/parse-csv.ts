@@ -74,6 +74,11 @@ export function parseCSV(csv: string) {
 
 				commitsPerMonth[commitsPerMonthIndex] = Number(items[0]);
 				commitsPerMonthIndex++;
+			} else if (commitsPerMonthIndex === 12) {
+				// El ultimo item tiene las fechas en format ISO divididas por el caracter ~
+				const [first, last] = items[0].split('~');
+				currentContributor!.c.f = last;
+				currentContributor!.c.l = first;
 			}
 		} else if (items.length === 5) {
 			// Push previous contributor before switching
@@ -98,7 +103,7 @@ export function parseCSV(csv: string) {
 				loc: Number(items[2]),
 				rm: Number(items[3]),
 				o: Number(items[4]),
-				c: { cph: {}, cpm: {}, a: 0 },
+				c: { cph: {}, cpm: {}, a: 0, f: '', l: '' },
 			};
 		}
 	});
