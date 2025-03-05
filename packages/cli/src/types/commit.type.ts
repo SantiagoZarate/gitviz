@@ -1,3 +1,10 @@
 export interface Commit {
-	d: string;
+	// Commits per hour
+	cph: {
+		[key: string]: number;
+	};
+	// Commits per month
+	cpm: {
+		[key: string]: number;
+	};
 }

@@ -1,12 +1,13 @@
 import { execSync } from 'node:child_process';
 import type { Contributor } from '../../types/contributor.type';
+import { updateContributorCommits } from './update-contributor-commits';
 
 // Get contributors and their commit stats
 export async function getContributors(): Promise<Map<string, Contributor>> {
-	const contributors = new Map();
+	const contributors: Map<string, Contributor> = new Map();
 
 	const logOutput = execSync(
-		'git log --pretty=format:"|||%n%an <%ae> %ad" --date=unix --shortstat',
+		'git log --pretty=format:"|||%n%an <%ae> %ad" --date=iso --shortstat',
 		{ encoding: 'utf-8' },
 	);
 
@@ -24,10 +25,18 @@ export async function getContributors(): Promise<Map<string, Contributor>> {
 		const key = `${name}|${email}`;
 
 		if (!contributors.has(key)) {
+			const commitsPerHour: Record<string, number> = Object.fromEntries(
+				Array.from({ length: 24 }, (_, i) => [i.toString(), 0]),
+			);
+
+			const commitsPerMonth: Record<string, number> = Object.fromEntries(
+				Array.from({ length: 12 }, (_, i) => [i.toString(), 0]),
+			);
+
 			contributors.set(key, {
 				n: name,
 				e: email,
-				c: [],
+				c: { cph: commitsPerHour, cpm: commitsPerMonth },
 				o: 0,
 				loc: 0,
 				rm: 0,
@@ -35,19 +44,15 @@ export async function getContributors(): Promise<Map<string, Contributor>> {
 		}
 
 		currentContributor = key;
-		const contributor = contributors.get(key);
+		const contributor = contributors.get(key)!;
 
-		const commit = {
-			d: date,
-		};
+		updateContributorCommits(contributor, date);
 
 		if (currentContributor) {
 			const { deletions, insertions } = extractChanges(line);
 			contributor.loc += insertions;
 			contributor.rm += deletions;
 		}
-
-		contributor.c.push(commit);
 	});
 
 	return contributors;
