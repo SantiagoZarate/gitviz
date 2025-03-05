@@ -20,10 +20,23 @@ async function getAllBranches() {
 
 // src/helpers/git/get-contributors.ts
 import { execSync } from "node:child_process";
+
+// src/helpers/git/update-contributor-commits.ts
+function updateContributorCommits(contributor, isoDate) {
+  const date = new Date(isoDate);
+  const hour = date.getUTCHours();
+  const month = String(
+    Number(date.toISOString().split("-")[1].replace("0", "")) - 1
+  );
+  contributor.c.cph[hour] = (contributor.c.cph[hour] || 0) + 1;
+  contributor.c.cpm[month] = (contributor.c.cpm[month] || 0) + 1;
+}
+
+// src/helpers/git/get-contributors.ts
 async function getContributors() {
   const contributors = /* @__PURE__ */ new Map();
   const logOutput = execSync(
-    'git log --pretty=format:"|||%n%an <%ae> %ad" --date=unix --shortstat',
+    'git log --pretty=format:"|||%n%an <%ae> %ad" --date=iso --shortstat',
     { encoding: "utf-8" }
   );
   let currentContributor = "";
@@ -36,10 +49,16 @@ async function getContributors() {
     const [, name, email, date] = authorMatch;
     const key = `${name}|${email}`;
     if (!contributors.has(key)) {
+      const commitsPerHour = Object.fromEntries(
+        Array.from({ length: 24 }, (_, i) => [i.toString(), 0])
+      );
+      const commitsPerMonth = Object.fromEntries(
+        Array.from({ length: 12 }, (_, i) => [i.toString(), 0])
+      );
       contributors.set(key, {
         n: name,
         e: email,
-        c: [],
+        c: { cph: commitsPerHour, cpm: commitsPerMonth },
         o: 0,
         loc: 0,
         rm: 0
@@ -47,15 +66,12 @@ async function getContributors() {
     }
     currentContributor = key;
     const contributor = contributors.get(key);
-    const commit = {
-      d: date
-    };
+    updateContributorCommits(contributor, date);
     if (currentContributor) {
       const { deletions, insertions } = extractChanges(line);
       contributor.loc += insertions;
       contributor.rm += deletions;
     }
-    contributor.c.push(commit);
   });
   return contributors;
 }
@@ -138,8 +154,11 @@ function jsonToCsv(json) {
     let branchCsv = `b-${n},`;
     co.forEach(({ n: n2, e, c, o, loc, rm }) => {
       let commitDates = "";
-      c.forEach(({ d }) => {
-        commitDates += `|${d},`;
+      Object.entries(c.cph).map(([hour, value]) => {
+        commitDates += `|${value}`;
+      });
+      Object.entries(c.cpm).map(([month, value]) => {
+        commitDates += `|${value}`;
       });
       branchCsv += `|${n2},${e},${o},${loc},${rm},${commitDates}`;
     });
@@ -179,6 +198,9 @@ var getGitStats = async () => {
   log.info("Opening visualization in browser...");
   const clientUrl = process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://git-viz.netlify.app";
   const url = `${clientUrl}/stats/?q=${compressedCsv}`;
+  console.log({ csv });
+  console.log("JSON COMPRESSED: ", compressed.length);
+  console.log("CSV COMPRESSED: ", compressedCsv.length);
   await open(url);
   log.success("Done!");
   return data;

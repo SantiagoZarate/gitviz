@@ -1,7 +1,5 @@
 import { useGitContext } from '@/context/global-context';
-import { getCommitsPerHour } from '@/helpers/get-commits-per-hour';
-import { formatCommitDate } from '@/lib/format-commit-date';
-import { countByMonth } from '@/lib/sort-unix-dates-by-month';
+import { mapCommitMonths } from '@/helpers/map-commits-months';
 import { AnimatePresence, type Variants, motion } from 'motion/react';
 import { BarChart } from '../charts/bar-chart';
 import { generateChartConfig } from '../charts/generate-chart-config';
@@ -29,7 +27,7 @@ export function ActiveContributor() {
 	const { activeContributor, contributors } = useGitContext();
 
 	const totalContributions = contributors.reduce(
-		(prev, curr) => prev + curr.commits.length,
+		(prev, curr) => prev + curr.commits.amount,
 		0,
 	);
 
@@ -41,15 +39,15 @@ export function ActiveContributor() {
 	).toFixed(2);
 
 	const contributionPercentage = (
-		((activeContributor?.commits.length ?? 0) / totalContributions) *
+		((activeContributor?.commits.amount ?? 0) / totalContributions) *
 		100
 	).toFixed(2);
 
 	const defaultPfp =
 		'https://preview.redd.it/default-pfp-v0-1to4yvt3i88c1.png?width=1080&crop=smart&auto=webp&s=67e1e2ad39382a1d2822a854781e441f33656554';
 
-	const contributionsByMonth = countByMonth(
-		activeContributor?.commits.map((commit) => commit.date) ?? [],
+	const contributionsByMonth = mapCommitMonths(
+		activeContributor?.commits.commitsPerMonth ?? {},
 	);
 
 	console.log({ contributionsByMonth });
@@ -67,16 +65,16 @@ export function ActiveContributor() {
 		data: chartData.map((c) => ({ email: c.nameKey, name: c.nameKey })),
 	});
 
-	const commitsPerHour = getCommitsPerHour(
-		activeContributor?.commits.map((c) => c.date) ?? [],
-	);
+	const commitsPerHour = activeContributor?.commits.commitsPerHour;
 
-	const hoursData = Object.entries(commitsPerHour).map(([nameKey, dataKey]) => {
-		return {
-			dataKey,
-			nameKey,
-		};
-	});
+	const hoursData = Object.entries(commitsPerHour ?? {}).map(
+		([nameKey, dataKey]) => {
+			return {
+				dataKey,
+				nameKey,
+			};
+		},
+	);
 
 	return (
 		<AnimatePresence>
@@ -99,7 +97,7 @@ export function ActiveContributor() {
 									<CardTitle>{activeContributor.name}</CardTitle>
 									<CardDescription className='flex divide-x'>
 										<p className='pr-1'>
-											{activeContributor.commits.length} commits
+											{activeContributor.commits.amount} commits
 										</p>
 										<p className='pl-1'>{activeContributor.owned} LoC</p>
 									</CardDescription>
@@ -122,7 +120,7 @@ export function ActiveContributor() {
 									</p>
 									<ProgressBar width={contributionLoCPercentage} />
 								</section>
-								<section className='flex flex-col gap-2'>
+								{/* <section className='flex flex-col gap-2'>
 									<section>
 										<p className='text-primary/50 text-sm'>
 											Latest contribution
@@ -141,7 +139,7 @@ export function ActiveContributor() {
 											)}
 										</p>
 									</section>
-								</section>
+								</section> */}
 							</CardContent>
 						</Card>
 					</motion.div>

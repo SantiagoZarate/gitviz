@@ -42,7 +42,7 @@ export function ContributorItem({
 				</section> */}
 			</section>
 			<section className=''>
-				<p>{contributor.commits.length}</p>
+				<p>{contributor.commits.amount}</p>
 			</section>
 		</li>
 	);

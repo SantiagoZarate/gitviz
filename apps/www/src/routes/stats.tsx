@@ -22,7 +22,7 @@ function RouteComponent() {
 
 	const dataForChart =
 		contributors.map(({ commits, email }) => ({
-			dataKey: commits.length,
+			dataKey: commits.amount,
 			nameKey: email,
 			fill: `var(--color-${cleanEmail(email)})`,
 		})) ?? [];

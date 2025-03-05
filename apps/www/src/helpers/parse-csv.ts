@@ -33,8 +33,11 @@ export function parseCSV(csv: string) {
 			if (items[0].startsWith('b-')) {
 				// Push last contributor before switching branches
 				if (currentContributor) {
+					currentContributor.c.cph = commitsPerHour!;
+					currentContributor.c.cpm = commitsPerMonth!;
+					currentContributor.c.a = countCommitsAmount(commitsPerMonth!);
 					currentBranch?.co.push(currentContributor);
-					currentContributor = null;
+					currentContributor = null; // Reset current contributor
 				}
 
 				// Push previous branch if exists
