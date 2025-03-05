@@ -1,5 +1,11 @@
 # @gitviz/cli
 
+## 0.0.19
+
+### Patch Changes
+
+- send first and last commit iso date
+
 ## 0.0.18
 
 ### Patch Changes
