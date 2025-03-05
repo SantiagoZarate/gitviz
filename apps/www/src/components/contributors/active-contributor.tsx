@@ -1,4 +1,5 @@
 import { useGitContext } from '@/context/global-context';
+import { getCommitsPerHour } from '@/helpers/get-commits-per-hour';
 import { formatCommitDate } from '@/lib/format-commit-date';
 import { countByMonth } from '@/lib/sort-unix-dates-by-month';
 import { AnimatePresence, type Variants, motion } from 'motion/react';
@@ -62,13 +63,20 @@ export function ActiveContributor() {
 		},
 	);
 
-	console.log({ chartData });
-
 	const chartConfig = generateChartConfig({
 		data: chartData.map((c) => ({ email: c.nameKey, name: c.nameKey })),
 	});
 
-	console.log({ chartConfig });
+	const commitsPerHour = getCommitsPerHour(
+		activeContributor?.commits.map((c) => c.date) ?? [],
+	);
+
+	const hoursData = Object.entries(commitsPerHour).map(([nameKey, dataKey]) => {
+		return {
+			dataKey,
+			nameKey,
+		};
+	});
 
 	return (
 		<AnimatePresence>
@@ -138,6 +146,7 @@ export function ActiveContributor() {
 						</Card>
 					</motion.div>
 					<BarChart data={chartData} config={chartConfig} />
+					<BarChart data={hoursData} config={chartConfig} />
 				</section>
 			)}
 		</AnimatePresence>

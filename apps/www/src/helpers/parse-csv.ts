@@ -41,9 +41,6 @@ export function parseCSV(csv: string) {
 				}
 			}
 		} else if (items.length === 5) {
-			console.log('NUEVO CONTRIBUIDOR');
-			console.log({ items });
-
 			// Push previous contributor before switching
 			if (currentContributor) {
 				currentBranch?.co.push(currentContributor);
