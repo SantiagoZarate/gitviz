@@ -16,10 +16,10 @@ export function jsonToCsv(json: RawJson) {
 		co.forEach(({ n, e, c, o, loc, rm }) => {
 			let commitDates = '';
 			Object.entries(c.cph).map(([hour, value]) => {
-				commitDates += `|${value}`;
+				commitDates += `|${value},`;
 			});
 			Object.entries(c.cpm).map(([month, value]) => {
-				commitDates += `|${value}`;
+				commitDates += `|${value},`;
 			});
 			branchCsv += `|${n},${e},${o},${loc},${rm},${commitDates}`;
 		});

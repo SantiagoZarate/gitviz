@@ -155,10 +155,10 @@ function jsonToCsv(json) {
     co.forEach(({ n: n2, e, c, o, loc, rm }) => {
       let commitDates = "";
       Object.entries(c.cph).map(([hour, value]) => {
-        commitDates += `|${value}`;
+        commitDates += `|${value},`;
       });
       Object.entries(c.cpm).map(([month, value]) => {
-        commitDates += `|${value}`;
+        commitDates += `|${value},`;
       });
       branchCsv += `|${n2},${e},${o},${loc},${rm},${commitDates}`;
     });

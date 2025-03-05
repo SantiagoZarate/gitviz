@@ -70,10 +70,10 @@ export const getGitStats = async () => {
 
 	const url = `${clientUrl}/stats/?q=${compressedCsv}`;
 
-	console.log({ csv });
+	// console.log({ csv });
 
-	console.log('JSON COMPRESSED: ', compressed.length);
-	console.log('CSV COMPRESSED: ', compressedCsv.length);
+	// console.log('JSON COMPRESSED: ', compressed.length);
+	// console.log('CSV COMPRESSED: ', compressedCsv.length);
 
 	await open(url);
 

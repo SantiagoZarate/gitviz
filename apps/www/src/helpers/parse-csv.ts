@@ -123,7 +123,5 @@ export function parseCSV(csv: string) {
 		throw new Error('Invalid data');
 	}
 
-	console.log(result.data);
-
 	return result.data;
 }
