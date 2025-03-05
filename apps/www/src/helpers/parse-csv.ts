@@ -78,6 +78,8 @@ export function parseCSV(csv: string) {
 		} else if (items.length === 5) {
 			// Push previous contributor before switching
 			if (currentContributor) {
+				console.log({ currentContributor });
+
 				currentContributor.c.cph = commitsPerHour!;
 				currentContributor.c.cpm = commitsPerMonth!;
 				currentContributor.c.a = countCommitsAmount(commitsPerMonth!);
@@ -86,6 +88,8 @@ export function parseCSV(csv: string) {
 				// Reset indexes
 				commitsPerHourIndex = 0;
 				commitsPerMonthIndex = 0;
+				commitsPerHour = null;
+				commitsPerMonth = null;
 			}
 
 			currentContributor = {
