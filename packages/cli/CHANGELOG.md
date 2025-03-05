@@ -1,5 +1,11 @@
 # @gitviz/cli
 
+## 0.0.16
+
+### Patch Changes
+
+- send csv compressed instead of json
+
 ## 0.0.15
 
 ### Patch Changes
