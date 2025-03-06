@@ -5,10 +5,11 @@ import { updateContributorCommits } from './update-contributor-commits';
 // Get contributors and their commit stats
 export async function getContributors(): Promise<Map<string, Contributor>> {
 	const contributors: Map<string, Contributor> = new Map();
+	const maxBuffer = 1024 * 1024 * 50; // 50 Mb
 
 	const logOutput = execSync(
-		'git log --pretty=format:"|||%n%an <%ae> %ad" --date=iso --shortstat',
-		{ encoding: 'utf-8' },
+		'git log -n 3000 --pretty=format:"|||%n%an <%ae> %ad" --date=iso --shortstat',
+		{ encoding: 'utf-8', maxBuffer },
 	);
 
 	let currentContributor = '';

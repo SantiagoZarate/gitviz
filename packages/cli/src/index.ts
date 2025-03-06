@@ -35,7 +35,9 @@ export const getGitStats = async () => {
 	for (const branch of branches) {
 		await git.checkout(branch);
 		const contributors = await getContributors();
-		await getLineOwnership(contributors);
+		if (args.getOwnership) {
+			await getLineOwnership(contributors);
+		}
 
 		branchData.push({
 			n: branch,
@@ -50,10 +52,6 @@ export const getGitStats = async () => {
 		t: repoName,
 		b: branchData,
 	};
-
-	const compressed = LZString.compressToEncodedURIComponent(
-		JSON.stringify(data),
-	);
 
 	const csv = jsonToCsv(data);
 

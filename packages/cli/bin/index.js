@@ -8,8 +8,10 @@ import simpleGit from "simple-git";
 // src/helpers/args.ts
 var [, , ...args] = process.argv;
 var currentBranchOnly = args.includes("--current") || args.includes("-c");
+var getOwnership = args.includes("--owner") || args.includes("-o");
 var args_default = {
-  currentBranchOnly
+  currentBranchOnly,
+  getOwnership
 };
 
 // src/helpers/git/get-all-branches.ts
@@ -35,9 +37,10 @@ function updateContributorCommits(contributor, isoDate) {
 // src/helpers/git/get-contributors.ts
 async function getContributors() {
   const contributors = /* @__PURE__ */ new Map();
+  const maxBuffer = 1024 * 1024 * 50;
   const logOutput = execSync(
-    'git log --pretty=format:"|||%n%an <%ae> %ad" --date=iso --shortstat',
-    { encoding: "utf-8" }
+    'git log -n 3000 --pretty=format:"|||%n%an <%ae> %ad" --date=iso --shortstat',
+    { encoding: "utf-8", maxBuffer }
   );
   let currentContributor = "";
   const splittedLog = logOutput.split("|||");
@@ -180,7 +183,9 @@ var getGitStats = async () => {
   for (const branch of branches) {
     await git.checkout(branch);
     const contributors = await getContributors();
-    await getLineOwnership(contributors);
+    if (args_default.getOwnership) {
+      await getLineOwnership(contributors);
+    }
     branchData.push({
       n: branch,
       co: Array.from(contributors.values())
@@ -191,9 +196,6 @@ var getGitStats = async () => {
     t: repoName,
     b: branchData
   };
-  const compressed = LZString.compressToEncodedURIComponent(
-    JSON.stringify(data)
-  );
   const csv = jsonToCsv(data);
   const compressedCsv = LZString.compressToEncodedURIComponent(csv);
   log.success("Git analysis completed successfully.");
