@@ -1,5 +1,6 @@
 import { useGitContext } from '@/context/global-context';
 import { useState } from 'react';
+import { ContributorsIcon } from '../icons/contributors-icon';
 import { Input } from '../ui/input';
 import { ContributorsList } from './contributors-list';
 
@@ -20,8 +21,14 @@ export function Contributors() {
 
 	return (
 		<section className='flex flex-col gap-4'>
-			<header className='flex flex-col gap-2'>
-				<h3>Contributors</h3>
+			<header className='flex items-center gap-2'>
+				<span className='w-fit rounded-md border p-1'>
+					<ContributorsIcon />
+				</span>
+				<h3>
+					{contributors.length}{' '}
+					{contributors.length > 1 ? 'Contributors' : 'Contributor'}
+				</h3>
 			</header>
 			<section className='flex flex-col gap-2'>
 				<label htmlFor='contributor'>Filter by contributor name</label>
