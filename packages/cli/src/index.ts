@@ -71,7 +71,7 @@ export const getGitStats = async () => {
 	// console.log({ csv });
 
 	// console.log('JSON COMPRESSED: ', compressed.length);
-	// console.log('CSV COMPRESSED: ', compressedCsv.length);
+	console.log('CSV COMPRESSED: ', compressedCsv.length);
 
 	await open(url);
 

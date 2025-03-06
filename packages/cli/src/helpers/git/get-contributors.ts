@@ -1,5 +1,6 @@
 import { execSync } from 'node:child_process';
 import type { Contributor } from '../../types/contributor.type';
+import { convertIsoToUnix } from '../convert-iso-to-unix';
 import { updateContributorCommits } from './update-contributor-commits';
 
 // Get contributors and their commit stats
@@ -37,7 +38,12 @@ export async function getContributors(): Promise<Map<string, Contributor>> {
 			contributors.set(key, {
 				n: name,
 				e: email,
-				c: { cph: commitsPerHour, cpm: commitsPerMonth, f: date, l: '' },
+				c: {
+					cph: commitsPerHour,
+					cpm: commitsPerMonth,
+					f: String(convertIsoToUnix(date)),
+					l: '',
+				},
 				o: 0,
 				loc: 0,
 				rm: 0,
@@ -50,7 +56,7 @@ export async function getContributors(): Promise<Map<string, Contributor>> {
 		updateContributorCommits(contributor, date);
 
 		// Update last commit always
-		contributor.c.l = date;
+		contributor.c.l = String(convertIsoToUnix(date));
 
 		if (currentContributor) {
 			const { deletions, insertions } = extractChanges(line);

@@ -23,6 +23,13 @@ async function getAllBranches() {
 // src/helpers/git/get-contributors.ts
 import { execSync } from "node:child_process";
 
+// src/helpers/convert-iso-to-unix.ts
+function convertIsoToUnix(isoDate) {
+  const date = new Date(isoDate);
+  const unixTimestamp = Math.floor(date.getTime() / 1e3);
+  return unixTimestamp;
+}
+
 // src/helpers/git/update-contributor-commits.ts
 function updateContributorCommits(contributor, isoDate) {
   const date = new Date(isoDate);
@@ -61,7 +68,12 @@ async function getContributors() {
       contributors.set(key, {
         n: name,
         e: email,
-        c: { cph: commitsPerHour, cpm: commitsPerMonth, f: date, l: "" },
+        c: {
+          cph: commitsPerHour,
+          cpm: commitsPerMonth,
+          f: String(convertIsoToUnix(date)),
+          l: ""
+        },
         o: 0,
         loc: 0,
         rm: 0
@@ -70,7 +82,7 @@ async function getContributors() {
     currentContributor = key;
     const contributor = contributors.get(key);
     updateContributorCommits(contributor, date);
-    contributor.c.l = date;
+    contributor.c.l = String(convertIsoToUnix(date));
     if (currentContributor) {
       const { deletions, insertions } = extractChanges(line);
       contributor.loc += insertions;
@@ -159,10 +171,10 @@ function jsonToCsv(json) {
     co.forEach(({ n: n2, e, c, o, loc, rm }) => {
       let commitDates = "";
       Object.entries(c.cph).map(([hour, value]) => {
-        commitDates += `|${value},`;
+        commitDates += `|${value}`;
       });
       Object.entries(c.cpm).map(([month, value]) => {
-        commitDates += `|${value},`;
+        commitDates += `|${value}`;
       });
       commitDates += `|${c.f}~${c.l}`;
       branchCsv += `|${n2},${e},${o},${loc},${rm},${commitDates}`;
@@ -202,6 +214,7 @@ var getGitStats = async () => {
   log.info("Opening visualization in browser...");
   const clientUrl = process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://git-viz.netlify.app";
   const url = `${clientUrl}/stats/?q=${compressedCsv}`;
+  console.log("CSV COMPRESSED: ", compressedCsv.length);
   await open(url);
   log.success("Done!");
   return data;
