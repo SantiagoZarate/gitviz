@@ -1,5 +1,11 @@
 # @gitviz/cli
 
+## 0.0.20
+
+### Patch Changes
+
+- send commits dates in unix format
+
 ## 0.0.19
 
 ### Patch Changes
