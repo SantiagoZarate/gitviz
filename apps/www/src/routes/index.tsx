@@ -1,3 +1,4 @@
+import { HeroSection } from '@/components/landing/hero/hero-section';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/')({
@@ -5,5 +6,11 @@ export const Route = createFileRoute('/')({
 });
 
 function RouteComponent() {
-	return <div className='bg-secondary'>Landing page</div>;
+	return (
+		<section className='flex flex-col divide-y'>
+			<div className=''>
+				<HeroSection />
+			</div>
+		</section>
+	);
 }
