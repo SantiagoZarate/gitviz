@@ -20,7 +20,7 @@ export function Contributors() {
 	};
 
 	return (
-		<section className='flex flex-col gap-4'>
+		<section className='flex flex-col gap-4 overflow-hidden p-4'>
 			<header className='flex items-center gap-2'>
 				<span className='w-fit rounded-md border p-1'>
 					<ContributorsIcon />

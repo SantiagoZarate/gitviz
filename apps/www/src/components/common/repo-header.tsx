@@ -7,7 +7,7 @@ export function RepoHeader() {
 	const totalLoC = contributors.reduce((prev, curr) => prev + curr.owned, 0);
 
 	return (
-		<header className='flex flex-col gap-2'>
+		<header className='flex flex-col gap-2 p-6'>
 			<section className='flex items-center gap-2'>
 				<h1>{title}</h1>
 				<SelectBrach />

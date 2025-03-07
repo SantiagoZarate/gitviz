@@ -51,8 +51,6 @@ export function ActiveContributor() {
 		activeContributor?.commits.commitsPerMonth ?? {},
 	);
 
-	console.log({ contributionsByMonth });
-
 	const chartData = Object.entries(contributionsByMonth).map(
 		([nameKey, dataKey]) => {
 			return {
@@ -80,14 +78,14 @@ export function ActiveContributor() {
 	return (
 		<AnimatePresence>
 			{activeContributor !== null && (
-				<section className='flex flex-col gap-2'>
+				<section className='grid grid-cols-3 gap-2'>
 					<motion.div
 						variants={sectionVariant}
 						animate='visible'
 						exit='hidden'
 						initial='hidden'
 					>
-						<Card>
+						<Card className='h-full'>
 							<CardHeader className='flex-row items-center gap-2'>
 								<img
 									className='size-10 rounded-md'

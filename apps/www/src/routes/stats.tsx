@@ -32,15 +32,21 @@ function RouteComponent() {
 	});
 
 	return (
-		<section className='mx-auto grid w-full max-w-tablet grid-rows-[auto_1fr] gap-12 px-6 pt-12 pb-20'>
-			<RepoHeader />
-			<section className='grid h-full grid-cols-2 gap-6'>
-				<section className='relative'>
-					<section className='sticky top-12 flex flex-col gap-2'>
+		<section className='relative grid h-full grid-cols-[1fr_auto] divide-x'>
+			<section className='flex flex-col divide-y pb-20'>
+				<RepoHeader />
+				<section className='flex flex-col gap-4 p-6'>
+					<h1 className=''>General repo stats</h1>
+					<section className='grid grid-cols-2'>
 						<PieChart data={dataForChart} config={chartConfig} />
-						<ActiveContributor />
 					</section>
 				</section>
+				<section className='flex flex-col gap-4 p-6'>
+					<h1 className=''>Active contributor stats</h1>
+					<ActiveContributor />
+				</section>
+			</section>
+			<section className='sticky top-[58px] h-fit'>
 				<Contributors />
 			</section>
 		</section>
