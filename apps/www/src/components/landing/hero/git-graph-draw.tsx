@@ -1,94 +1,105 @@
 import { useEffect, useRef } from 'react';
+import { connectDots } from './connect-dots';
 import './curved-lines.css';
-
-function connectDivs(div1: HTMLElement, div2: HTMLElement, svg: SVGSVGElement) {
-	const rect1 = div1.getBoundingClientRect();
-	const rect2 = div2.getBoundingClientRect();
-
-	const x1 = rect1.left + rect1.width / 2;
-	const y1 = rect1.top + rect1.height / 2;
-	const x2 = rect2.left + rect2.width / 2;
-	const y2 = rect2.top + rect2.height / 2;
-
-	// Control points for smooth curve
-	const dx = Math.abs(x2 - x1) * 0.4;
-	const xControl1 = x1 + dx;
-	const yControl1 = y1;
-	const xControl2 = x2 - dx;
-	const yControl2 = y2;
-
-	// Define cubic Bézier path
-	const pathData = `M ${x1},${y1} C ${xControl1},${yControl1} ${xControl2},${yControl2} ${x2},${y2}`;
-
-	// Ensure SVG covers the required area
-	const minX = Math.min(x1, x2) - 20;
-	const minY = Math.min(y1, y2) - 20;
-	const maxX = Math.max(x1, x2) + 20;
-	const maxY = Math.max(y1, y2) + 20;
-	svg.setAttribute('viewBox', `${minX} ${minY} ${maxX - minX} ${maxY - minY}`);
-	svg.setAttribute('width', `${maxX - minX}`);
-	svg.setAttribute('height', `${maxY - minY}`);
-
-	console.log({ pathData });
-
-	// Create or update the path
-	let path = svg.querySelector('path');
-	if (!path) {
-		path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-		path.classList.add('path');
-		svg.appendChild(path);
-	}
-	path.setAttribute('d', pathData);
-}
 
 export function GitGraphDraw() {
 	const svgRef = useRef<SVGSVGElement>(null);
-	const box1Ref = useRef<HTMLDivElement>(null);
-	const box2Ref = useRef<HTMLDivElement>(null);
+	const pathsRef = useRef<SVGPathElement[]>([]);
+	const box1Ref = useRef<SVGCircleElement>(null);
+	const box2Ref = useRef<SVGCircleElement>(null);
+	const box3Ref = useRef<SVGCircleElement>(null);
 
 	useEffect(() => {
-		const svg = svgRef.current;
 		const box1 = box1Ref.current;
 		const box2 = box2Ref.current;
+		const box3 = box3Ref.current;
+		const svg = svgRef.current;
 
-		if (!svg || !box1 || !box2) return;
+		if (!box1 || !box2 || !box3 || !svg) return;
 
 		console.log('EJECUTANDO');
 
-		const updateCurve = () => connectDivs(box1, box2, svg);
+		const updateCurve = () => {
+			// Remove existing paths
+			pathsRef.current.forEach((path) => svg.removeChild(path));
+			pathsRef.current = [];
+
+			// Generate new paths
+			pathsRef.current.push(
+				connectDots({ circle1: box1, circle2: box2, svgContainer: svg }),
+			);
+			pathsRef.current.push(
+				connectDots({ circle1: box2, circle2: box3, svgContainer: svg }),
+			);
+		};
 		updateCurve(); // Initial draw
 
 		window.addEventListener('resize', updateCurve);
 		return () => window.removeEventListener('resize', updateCurve);
 	}, []);
 
+	let firstColumn = 20;
+	let secondColumn = 40;
+	let thirdColumn = 10;
+	const dotsGap = 20;
+
+	// @
 	return (
 		<section className='container flex items-center justify-center gap-12'>
-			<svg ref={svgRef} className='line' id='svg-container' />
-			<div className='flex flex-col gap-12 self-center'>
+			<svg ref={svgRef} className='h-full w-full bg-red-300'>
 				{Array(2)
 					.fill(1)
-					.map((_n, index) => (
-						<div
-							ref={index === 1 ? box1Ref : null}
-							// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-							key={index}
-							className='h-2 w-2 rounded-full bg-yellow-600'
-						/>
-					))}
-			</div>
-			<div className='flex flex-col gap-12'>
+					.map((_n, index) => {
+						const cy = firstColumn;
+						firstColumn += dotsGap;
+						return (
+							<circle
+								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+								key={index}
+								ref={index === 1 ? box1Ref : null}
+								className='spot'
+								cx='50'
+								cy={cy}
+								r='4'
+							/>
+						);
+					})}
 				{Array(6)
 					.fill(1)
-					.map((_n, index) => (
-						<div
-							ref={index === 2 ? box2Ref : null}
-							// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-							key={index}
-							className='h-2 w-2 rounded-full bg-green-400'
-						/>
-					))}
-			</div>
+					.map((_n, index) => {
+						const cy = secondColumn;
+						secondColumn += dotsGap;
+
+						return (
+							<circle
+								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+								key={index}
+								ref={index === 2 ? box2Ref : null}
+								className='spot'
+								cx='100'
+								cy={cy}
+								r='4'
+							/>
+						);
+					})}
+				{Array(3)
+					.fill(1)
+					.map((_n, index) => {
+						const cy = thirdColumn;
+						thirdColumn += dotsGap;
+						return (
+							<circle
+								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+								key={index}
+								ref={index === 2 ? box3Ref : null}
+								className='spot'
+								cx='150'
+								cy={cy}
+								r='4'
+							/>
+						);
+					})}
+			</svg>
 		</section>
 	);
 }
