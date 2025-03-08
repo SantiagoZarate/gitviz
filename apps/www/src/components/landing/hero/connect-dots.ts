@@ -5,8 +5,10 @@ interface Options {
 }
 
 export function connectDots({ circle1, circle2, svgContainer }: Options) {
+	// Circle 1 coordinates
 	const p1x = Number.parseFloat(circle1.getAttribute('cx')!);
 	const p1y = Number.parseFloat(circle1.getAttribute('cy')!);
+	// Circle 2 coordinates
 	const p2x = Number.parseFloat(circle2.getAttribute('cx')!);
 	const p2y = Number.parseFloat(circle2.getAttribute('cy')!);
 
@@ -25,7 +27,6 @@ export function connectDots({ circle1, circle2, svgContainer }: Options) {
 
 	// Construct the cubic Bézier curve
 	const curve = `M${p1x} ${p1y} C${c1x},${c1y} ${c2x},${c2y} ${p2x} ${p2y}`;
-	console.log({ curve });
 
 	// Create a new <path> element
 	const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
