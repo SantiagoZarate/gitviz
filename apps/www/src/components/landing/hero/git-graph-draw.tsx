@@ -71,7 +71,7 @@ export function GitGraphDraw() {
 	const thirdColumn = dinamicGap / 2 + dinamicGap;
 
 	return (
-		<section className='relative [mask-image:linear-gradient(0deg,transparent,black,transparent)]'>
+		<section className='relative [mask-image:linear-gradient(0deg,black_50%,transparent)]'>
 			<div className='svg-background' />
 			<svg ref={svgRef} className='container ' viewBox={viewBox}>
 				{/* Curved lines */}
