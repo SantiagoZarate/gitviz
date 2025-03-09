@@ -15,8 +15,10 @@
 	stroke: #3ed21b;
 	stroke-width: 4;
 	fill: none;
+	z-index: 0;
 }
 
 .spot {
 	fill: blue;
+	z-index: 10;
 }

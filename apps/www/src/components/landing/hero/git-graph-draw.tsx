@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { connectDots } from './connect-dots';
 import './curved-lines.css';
+import { DotsLine } from './dots-line';
 
 export function GitGraphDraw() {
 	const svgRef = useRef<SVGSVGElement>(null);
-	const pathsRef = useRef<SVGPathElement[]>([]);
 	const box1Ref = useRef<SVGCircleElement>(null);
 	const box2Ref = useRef<SVGCircleElement>(null);
 	const box3Ref = useRef<SVGCircleElement>(null);
@@ -34,17 +34,9 @@ export function GitGraphDraw() {
 		if (!box1 || !box2 || !box3 || !svg) return;
 
 		const updateCurve = () => {
-			// Remove existing paths
-			pathsRef.current.forEach((path) => svg.removeChild(path));
-			pathsRef.current = [];
-
 			// Generate new paths
-			pathsRef.current.push(
-				connectDots({ circle1: box1, circle2: box2, svgContainer: svg }),
-			);
-			pathsRef.current.push(
-				connectDots({ circle1: box2, circle2: box3, svgContainer: svg }),
-			);
+			connectDots({ circle1: box1, circle2: box2, svgContainer: svg });
+			connectDots({ circle1: box2, circle2: box3, svgContainer: svg });
 		};
 
 		updateCurve();
@@ -52,88 +44,42 @@ export function GitGraphDraw() {
 		return () => window.removeEventListener('resize', updateCurve);
 	}, [viewBox]); // 🔥 Runs only after `viewBox` updates
 
-	const firstColumnDots = 2;
 	const secondColumnDots = 6;
-	const thridColumnDots = 3;
-
-	const firstColumn = 20;
-	let secondColumn = 40;
-	const thirdColumn = 10;
-	const dotsGap = 20;
 
 	const viewBoxX = Number(viewBox.split(' ')[2]);
 	const viewBoxY = Number(viewBox.split(' ')[3]);
 
 	const dinamicGap = viewBoxY / secondColumnDots;
 
-	// @
+	const firstColumn = dinamicGap / 2 + dinamicGap * 2;
+	const thirdColumn = dinamicGap / 2 + dinamicGap;
+
 	return (
-		<section className='container flex items-center justify-center gap-12'>
-			<svg ref={svgRef} className='h-full w-full bg-red-300' viewBox={viewBox}>
-				{Array(firstColumnDots)
-					.fill(1)
-					.map((_n, index) => {
-						const aux = index * dinamicGap;
-
-						return (
-							<circle
-								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-								key={index}
-								ref={index === firstColumnDots - 1 ? box1Ref : null}
-								cy={aux + firstColumn}
-								cx={viewBoxX / 4}
-								className='spot'
-								r='4'
-							/>
-						);
-					})}
-				{Array(secondColumnDots)
-					.fill(1)
-					.map((_n, index) => {
-						const cy = secondColumn;
-						secondColumn += dotsGap;
-
-						return (
-							<circle
-								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-								key={index}
-								ref={index === 4 ? box2Ref : null}
-								className='spot'
-								cx={viewBoxX / 2}
-								cy={index * dinamicGap}
-								r='4'
-							/>
-						);
-					})}
-				{Array(thridColumnDots)
-					.fill(1)
-					.map((_n, index) => {
-						const aux = index * dinamicGap;
-						const cy = aux + thirdColumn;
-
-						const cx = viewBoxX / 2 + viewBoxX / 4;
-
-						return (
-							<circle
-								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-								key={index}
-								ref={index === thridColumnDots - 1 ? box3Ref : null}
-								className='spot'
-								cx={cx}
-								cy={cy}
-								r='4'
-							/>
-						);
-					})}
-				<path
-					className=''
-					d={`M${viewBoxX / 2} 0, ${viewBoxX / 2} ${viewBoxY}`}
-					stroke='green'
-					strokeWidth='4'
-					strokeLinecap='round'
-					fill='transparent'
-				/>
-			</svg>
-		</section>
+		<svg ref={svgRef} className='container bg-red-300' viewBox={viewBox}>
+			<DotsLine
+				amount={2}
+				cx={viewBoxX / 4}
+				gap={dinamicGap}
+				initialY={firstColumn}
+				ref={box1Ref}
+				branchingDot={2}
+			/>
+			<DotsLine
+				amount={7}
+				cx={viewBoxX / 2}
+				gap={dinamicGap}
+				initialY={0}
+				ref={box2Ref}
+				branchingDot={6}
+			/>
+			<DotsLine
+				branchingDot={3}
+				amount={3}
+				cx={viewBoxX / 2 + viewBoxX / 4}
+				gap={dinamicGap}
+				initialY={thirdColumn}
+				ref={box3Ref}
+			/>
+		</svg>
 	);
 }

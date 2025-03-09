@@ -8,7 +8,7 @@ export const Route = createFileRoute('/')({
 function RouteComponent() {
 	return (
 		<section className='flex flex-col divide-y'>
-			<div className=''>
+			<div className='border-b'>
 				<HeroSection />
 			</div>
 		</section>
