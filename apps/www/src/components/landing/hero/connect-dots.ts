@@ -29,15 +29,15 @@ export function connectDots({ circle1, circle2, svgContainer }: Options) {
 	const curve = `M${p1x} ${p1y} C${c1x},${c1y} ${c2x},${c2y} ${p2x} ${p2y}`;
 
 	// Create a new <path> element
-	const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-	path.setAttribute('d', curve);
-	path.setAttribute('stroke', 'green');
-	path.setAttribute('stroke-width', '4');
-	path.setAttribute('stroke-linecap', 'round');
-	path.setAttribute('fill', 'transparent');
+	// const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+	// path.setAttribute('d', curve);
+	// path.setAttribute('stroke', 'green');
+	// path.setAttribute('stroke-width', '4');
+	// path.setAttribute('stroke-linecap', 'round');
+	// path.setAttribute('fill', 'transparent');
 
 	// Append to SVG container
-	svgContainer.appendChild(path);
+	// svgContainer.appendChild(path);
 
-	return path;
+	return curve;
 }

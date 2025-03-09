@@ -20,7 +20,7 @@
 		"dotenv": "16.4.7",
 		"lucide-react": "^0.476.0",
 		"lz-string": "1.5.0",
-		"motion": "12.4.7",
+		"motion": "12.4.10",
 		"nuqs": "2.3.2",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",

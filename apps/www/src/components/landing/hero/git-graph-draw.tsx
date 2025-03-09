@@ -1,3 +1,4 @@
+import { motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { connectDots } from './connect-dots';
 import './curved-lines.css';
@@ -8,6 +9,10 @@ export function GitGraphDraw() {
 	const box1Ref = useRef<SVGCircleElement>(null);
 	const box2Ref = useRef<SVGCircleElement>(null);
 	const box3Ref = useRef<SVGCircleElement>(null);
+
+	const path1Ref = useRef<SVGPathElement>(null);
+	const path2Ref = useRef<SVGPathElement>(null);
+
 	const [viewBox, setViewBox] = useState('');
 
 	// 1️⃣ First useEffect: Set `viewBox` based on initial size
@@ -35,8 +40,19 @@ export function GitGraphDraw() {
 
 		const updateCurve = () => {
 			// Generate new paths
-			connectDots({ circle1: box1, circle2: box2, svgContainer: svg });
-			connectDots({ circle1: box2, circle2: box3, svgContainer: svg });
+			const curve1 = connectDots({
+				circle1: box2,
+				circle2: box1,
+				svgContainer: svg,
+			});
+			path1Ref.current?.setAttribute('d', curve1);
+
+			const curve2 = connectDots({
+				circle1: box2,
+				circle2: box3,
+				svgContainer: svg,
+			});
+			path2Ref.current?.setAttribute('d', curve2);
 		};
 
 		updateCurve();
@@ -55,7 +71,38 @@ export function GitGraphDraw() {
 	const thirdColumn = dinamicGap / 2 + dinamicGap;
 
 	return (
-		<svg ref={svgRef} className='container bg-red-300' viewBox={viewBox}>
+		<svg
+			ref={svgRef}
+			className='container [mask-image:linear-gradient(0deg,transparent,black,transparent)]'
+			viewBox={viewBox}
+		>
+			{/* Curved lines */}
+			<motion.path
+				ref={path1Ref}
+				initial={{
+					pathLength: 0,
+				}}
+				animate={{
+					pathLength: 1,
+					transition: {
+						delay: 0.5,
+						duration: 1,
+					},
+				}}
+				strokeWidth={4}
+				stroke={'green'}
+				fill={'transparent'}
+				strokeLinecap={'round'}
+			/>
+			<motion.path
+				ref={path2Ref}
+				initial={{ pathLength: 0 }}
+				animate={{ pathLength: 1 }}
+				strokeWidth={4}
+				stroke={'green'}
+				fill={'transparent'}
+				strokeLinecap={'round'}
+			/>
 			<DotsLine
 				amount={2}
 				cx={viewBoxX / 4}
