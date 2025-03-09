@@ -1,5 +1,5 @@
 import { motion, type Variants } from 'motion/react';
-import type { ForwardedRef } from 'react';
+import type { ComponentProps, ForwardedRef } from 'react';
 
 interface Props {
 	gap: number;
@@ -8,16 +8,9 @@ interface Props {
 	initialY: number;
 	cx: number;
 	branchingDot: number;
+	delayAnimation?: number;
+	pathClassname?: ComponentProps<'path'>['className'];
 }
-
-const container: Variants = {
-	hidden: {},
-	show: {
-		transition: {
-			staggerChildren: 0.2,
-		},
-	},
-};
 
 const item: Variants = {
 	hidden: { r: 0 },
@@ -36,18 +29,33 @@ export function DotsLine({
 	initialY,
 	cx,
 	branchingDot,
+	pathClassname,
+	delayAnimation = 0,
 }: Props) {
+	const container: Variants = {
+		hidden: {},
+		show: {
+			transition: {
+				staggerChildren: 0.2,
+			},
+		},
+	};
+
 	const aux = (amount - 1) * gap;
 
+	// @ts-ignore
+	container.show.transition.delayChildren = delayAnimation;
 	return (
 		<>
 			<motion.path
 				d={`M${cx} ${initialY + aux}, ${cx} ${initialY}`}
-				initial={{ pathLength: 0 }}
+				initial={{ pathLength: 0, opacity: 0 }}
 				animate={{
+					opacity: 1,
 					pathLength: 1,
-					transition: { type: 'spring', duration: 3 },
+					transition: { type: 'spring', duration: 3, delay: delayAnimation },
 				}}
+				className={pathClassname}
 				stroke='green'
 				strokeWidth='4'
 				strokeLinecap='round'
@@ -63,6 +71,12 @@ export function DotsLine({
 							variants={item}
 							ref={index === branchingDot - 1 ? ref : null}
 							className='z-50 fill-red-700 hover:fill-gray-400'
+							whileHover={{
+								r: 12,
+								transition: {
+									type: 'spring',
+								},
+							}}
 							cx={cx}
 							cy={cy + initialY}
 							stroke='#777'

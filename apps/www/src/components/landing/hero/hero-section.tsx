@@ -13,7 +13,9 @@ export function HeroSection() {
 				</p>
 				<Terminal />
 			</section>
-			<GitGraphDraw />
+			<section className='relative'>
+				<GitGraphDraw />
+			</section>
 		</section>
 	);
 }

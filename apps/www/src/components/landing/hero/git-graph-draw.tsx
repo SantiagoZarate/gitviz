@@ -71,62 +71,75 @@ export function GitGraphDraw() {
 	const thirdColumn = dinamicGap / 2 + dinamicGap;
 
 	return (
-		<svg
-			ref={svgRef}
-			className='container [mask-image:linear-gradient(0deg,transparent,black,transparent)]'
-			viewBox={viewBox}
-		>
-			{/* Curved lines */}
-			<motion.path
-				ref={path1Ref}
-				initial={{
-					pathLength: 0,
-				}}
-				animate={{
-					pathLength: 1,
-					transition: {
-						delay: 0.5,
-						duration: 1,
-					},
-				}}
-				strokeWidth={4}
-				stroke={'green'}
-				fill={'transparent'}
-				strokeLinecap={'round'}
-			/>
-			<motion.path
-				ref={path2Ref}
-				initial={{ pathLength: 0 }}
-				animate={{ pathLength: 1 }}
-				strokeWidth={4}
-				stroke={'green'}
-				fill={'transparent'}
-				strokeLinecap={'round'}
-			/>
-			<DotsLine
-				amount={2}
-				cx={viewBoxX / 4}
-				gap={dinamicGap}
-				initialY={firstColumn}
-				ref={box1Ref}
-				branchingDot={2}
-			/>
-			<DotsLine
-				amount={7}
-				cx={viewBoxX / 2}
-				gap={dinamicGap}
-				initialY={0}
-				ref={box2Ref}
-				branchingDot={6}
-			/>
-			<DotsLine
-				branchingDot={3}
-				amount={3}
-				cx={viewBoxX / 2 + viewBoxX / 4}
-				gap={dinamicGap}
-				initialY={thirdColumn}
-				ref={box3Ref}
-			/>
-		</svg>
+		<>
+			<div className='absolute inset-0 bg-red-400 [mask-image:radial-gradient(50%_100%_at_0%_0%,black,transparent)]' />
+			<svg
+				ref={svgRef}
+				className='container [mask-image:linear-gradient(0deg,transparent,black,transparent)]'
+				viewBox={viewBox}
+			>
+				{/* Curved lines */}
+				<motion.path
+					ref={path1Ref}
+					initial={{
+						pathLength: 0,
+						opacity: 0,
+					}}
+					animate={{
+						pathLength: 1,
+						opacity: 1,
+						transition: {
+							delay: 0.5,
+							duration: 1,
+						},
+					}}
+					strokeWidth={4}
+					fill={'transparent'}
+					strokeLinecap={'round'}
+					className='stroke-red-400'
+				/>
+				<motion.path
+					ref={path2Ref}
+					initial={{ pathLength: 0, opacity: 0 }}
+					animate={{
+						pathLength: 1,
+						opacity: 1,
+						transition: { delay: 0.5, duration: 1 },
+					}}
+					strokeWidth={4}
+					fill={'transparent'}
+					strokeLinecap={'round'}
+					className='stroke-blue-500'
+				/>
+				<DotsLine
+					amount={2}
+					cx={viewBoxX / 4}
+					gap={dinamicGap}
+					initialY={firstColumn}
+					ref={box1Ref}
+					branchingDot={2}
+					delayAnimation={1}
+					pathClassname='stroke-red-400'
+				/>
+				<DotsLine
+					amount={7}
+					cx={viewBoxX / 2}
+					gap={dinamicGap}
+					initialY={0}
+					ref={box2Ref}
+					branchingDot={6}
+				/>
+				<DotsLine
+					branchingDot={3}
+					amount={3}
+					cx={viewBoxX / 2 + viewBoxX / 4}
+					gap={dinamicGap}
+					initialY={thirdColumn}
+					ref={box3Ref}
+					delayAnimation={1.3}
+					pathClassname='stroke-blue-500'
+				/>
+			</svg>
+		</>
 	);
 }
