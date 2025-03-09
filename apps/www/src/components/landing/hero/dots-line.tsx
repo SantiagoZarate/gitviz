@@ -1,5 +1,5 @@
 import { motion, type Variants } from 'motion/react';
-import type { ComponentProps, ForwardedRef } from 'react';
+import type { ForwardedRef } from 'react';
 
 interface Props {
 	gap: number;
@@ -9,7 +9,6 @@ interface Props {
 	cx: number;
 	branchingDot: number;
 	delayAnimation?: number;
-	pathClassname?: ComponentProps<'path'>['className'];
 	color: keyof typeof colorVariant;
 }
 
@@ -45,7 +44,6 @@ export function DotsLine({
 	initialY,
 	cx,
 	branchingDot,
-	pathClassname,
 	delayAnimation = 0,
 	color,
 }: Props) {

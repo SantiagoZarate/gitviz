@@ -43,14 +43,12 @@ export function GitGraphDraw() {
 			const curve1 = connectDots({
 				circle1: box2,
 				circle2: box1,
-				svgContainer: svg,
 			});
 			path1Ref.current?.setAttribute('d', curve1);
 
 			const curve2 = connectDots({
 				circle1: box2,
 				circle2: box3,
-				svgContainer: svg,
 			});
 			path2Ref.current?.setAttribute('d', curve2);
 		};
@@ -116,7 +114,6 @@ export function GitGraphDraw() {
 					ref={box1Ref}
 					branchingDot={2}
 					delayAnimation={1}
-					pathClassname='stroke-red-400'
 				/>
 				<DotsLine
 					color='green'
@@ -136,7 +133,6 @@ export function GitGraphDraw() {
 					initialY={thirdColumn}
 					ref={box3Ref}
 					delayAnimation={1.3}
-					pathClassname='stroke-blue-500'
 				/>
 			</svg>
 		</section>

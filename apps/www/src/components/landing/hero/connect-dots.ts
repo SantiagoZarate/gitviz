@@ -1,10 +1,9 @@
 interface Options {
 	circle1: SVGCircleElement;
 	circle2: SVGCircleElement;
-	svgContainer: SVGSVGElement;
 }
 
-export function connectDots({ circle1, circle2, svgContainer }: Options) {
+export function connectDots({ circle1, circle2 }: Options) {
 	// Circle 1 coordinates
 	const p1x = Number.parseFloat(circle1.getAttribute('cx')!);
 	const p1y = Number.parseFloat(circle1.getAttribute('cy')!);
