@@ -71,13 +71,9 @@ export function GitGraphDraw() {
 	const thirdColumn = dinamicGap / 2 + dinamicGap;
 
 	return (
-		<>
-			<div className='absolute inset-0 bg-red-400 [mask-image:radial-gradient(50%_100%_at_0%_0%,black,transparent)]' />
-			<svg
-				ref={svgRef}
-				className='container [mask-image:linear-gradient(0deg,transparent,black,transparent)]'
-				viewBox={viewBox}
-			>
+		<section className='relative [mask-image:linear-gradient(0deg,transparent,black,transparent)]'>
+			<div className='svg-background' />
+			<svg ref={svgRef} className='container ' viewBox={viewBox}>
 				{/* Curved lines */}
 				<motion.path
 					ref={path1Ref}
@@ -96,7 +92,7 @@ export function GitGraphDraw() {
 					strokeWidth={4}
 					fill={'transparent'}
 					strokeLinecap={'round'}
-					className='stroke-red-400'
+					className='stroke-red-500/50'
 				/>
 				<motion.path
 					ref={path2Ref}
@@ -109,9 +105,10 @@ export function GitGraphDraw() {
 					strokeWidth={4}
 					fill={'transparent'}
 					strokeLinecap={'round'}
-					className='stroke-blue-500'
+					className='stroke-blue-500/50'
 				/>
 				<DotsLine
+					color='red'
 					amount={2}
 					cx={viewBoxX / 4}
 					gap={dinamicGap}
@@ -122,6 +119,7 @@ export function GitGraphDraw() {
 					pathClassname='stroke-red-400'
 				/>
 				<DotsLine
+					color='green'
 					amount={7}
 					cx={viewBoxX / 2}
 					gap={dinamicGap}
@@ -130,6 +128,7 @@ export function GitGraphDraw() {
 					branchingDot={6}
 				/>
 				<DotsLine
+					color='blue'
 					branchingDot={3}
 					amount={3}
 					cx={viewBoxX / 2 + viewBoxX / 4}
@@ -140,6 +139,6 @@ export function GitGraphDraw() {
 					pathClassname='stroke-blue-500'
 				/>
 			</svg>
-		</>
+		</section>
 	);
 }

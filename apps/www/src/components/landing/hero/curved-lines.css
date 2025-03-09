@@ -1,3 +1,9 @@
+@property --aux {
+	syntax: "<percentage>";
+	inherits: false;
+	initial-value: 70%;
+}
+
 .container {
 	position: relative;
 	width: 100%;
@@ -21,4 +27,20 @@
 .spot {
 	fill: blue;
 	z-index: 10;
+}
+
+.svg-background {
+	position: absolute;
+	inset: 0;
+	background-color: green;
+	mask-image: radial-gradient(var(--aux) 200% at 0% 0%, transparent 50%, black),
+		radial-gradient(var(--aux) 200% at 100% 0%, transparent 50%, black);
+	mask-composite: intersect;
+	animation: aux 2s infinite alternate-reverse;
+}
+
+@keyframes aux {
+	to {
+		--aux: 60%;
+	}
 }

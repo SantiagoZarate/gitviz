@@ -10,6 +10,7 @@ interface Props {
 	branchingDot: number;
 	delayAnimation?: number;
 	pathClassname?: ComponentProps<'path'>['className'];
+	color: keyof typeof colorVariant;
 }
 
 const item: Variants = {
@@ -22,6 +23,21 @@ const item: Variants = {
 	},
 };
 
+const colorVariant = {
+	green: {
+		path: 'stroke-green-500/50',
+		circle: 'fill-green-500',
+	},
+	red: {
+		path: 'stroke-red-500/50',
+		circle: 'fill-red-500',
+	},
+	blue: {
+		path: 'stroke-blue-500/50',
+		circle: 'fill-blue-500',
+	},
+};
+
 export function DotsLine({
 	amount,
 	gap,
@@ -31,6 +47,7 @@ export function DotsLine({
 	branchingDot,
 	pathClassname,
 	delayAnimation = 0,
+	color,
 }: Props) {
 	const container: Variants = {
 		hidden: {},
@@ -55,7 +72,7 @@ export function DotsLine({
 					pathLength: 1,
 					transition: { type: 'spring', duration: 3, delay: delayAnimation },
 				}}
-				className={pathClassname}
+				className={colorVariant[color].path}
 				stroke='green'
 				strokeWidth='4'
 				strokeLinecap='round'
@@ -70,7 +87,7 @@ export function DotsLine({
 							key={index}
 							variants={item}
 							ref={index === branchingDot - 1 ? ref : null}
-							className='z-50 fill-red-700 hover:fill-gray-400'
+							className={`${colorVariant[color].circle} hover:fill-gray-400`}
 							whileHover={{
 								r: 12,
 								transition: {
